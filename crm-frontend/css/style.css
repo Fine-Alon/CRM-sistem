@@ -1,0 +1,145 @@
+html {
+    box-sizing: border-box;
+
+}
+
+*,
+*::after,
+*::before {
+    box-sizing: inherit;
+}
+
+h1,
+h2,
+h3,
+p {
+    margin: 0;
+}
+
+img {
+    max-width: 100%;
+}
+
+body {
+    font-family: 'Open Sans', sans-serif;
+
+    font-style: normal;
+    background-color: var(--color-white);
+}
+
+ul {
+    display: block;
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+    font-size: 0;
+}
+
+::placeholder {
+    font-style: normal;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 19px;
+    color: #B0B0B0;
+}
+
+.container {
+    max-width: 1024px;
+    padding: 30px 0;
+    margin: 0 auto;
+}
+
+.header {
+    padding: 21px;
+    display: flex;
+    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.48);
+    position: relative;
+    z-index: 2;
+}
+
+.header_logo {
+    margin-right: 53px;
+}
+
+.header_search-input {
+    width: 580px;
+    min-height: 43px;
+    padding: 12px 16px;
+    border-color: #33333333;
+}
+
+.clients {
+    padding: 40px 20px;
+    background: #e5e5e552;
+}
+
+.clients_title {
+    margin-bottom: 30px;
+    display: inline-block;
+    font-weight: 700;
+    font-size: 24px;
+    line-height: 33px;
+    color: #333333;
+}
+
+.table {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 333px;
+    background-color: #fff;
+}
+
+.table_btn{
+    padding: 0;
+    margin: 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    flex-wrap: wrap;
+    text-align: center;
+}
+
+.table_item {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    background: #e5e5e552;
+}
+
+.table_header {
+    display: flex;
+    align-items: flex-start;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 16px;
+    color: #B0B0B0;
+    height: 33px;
+}
+
+.table-id {
+    width: 8%;
+    color: #9873FF;
+}
+
+.table-name {
+    width: 30%;
+}
+
+.table-ceate-date {
+    width: 15%;
+}
+
+.table-change-date {
+    width: 15%;
+}
+
+.table-contacts {
+    width: 12%;
+
+}
+
+.table-options {
+    width: 20%;
+}
