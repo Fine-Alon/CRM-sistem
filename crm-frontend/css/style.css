@@ -61,8 +61,13 @@ ul {
     margin-right: 53px;
 }
 
+.header_search{
+    width: 100%;
+}
+
 .header_search-input {
-    width: 580px;
+    min-width: 90%;
+    max-width: 580px;
     min-height: 43px;
     padding: 12px 16px;
     border-color: #33333333;
@@ -70,6 +75,7 @@ ul {
 
 .clients {
     padding: 40px 20px;
+    padding-bottom: 102px;
     background: #e5e5e552;
 }
 
@@ -86,11 +92,13 @@ ul {
     display: flex;
     flex-direction: column;
     width: 100%;
+    min-width: 730px;
     height: 333px;
     background-color: #fff;
+    margin-bottom: 40px;
 }
 
-.table_btn{
+.table_btn {
     padding: 0;
     margin: 0;
     background: none;
@@ -99,10 +107,41 @@ ul {
     display: flex;
     flex-wrap: wrap;
     text-align: center;
+    position: relative;
+}
+
+.table_btn-svg-1 {
+    position: absolute;
+    top: 21px;
+    left: 27px;
+}
+
+.table_btn-svg-2 {
+    position: absolute;
+    top: 19px;
+    left: 158px;
+}
+
+.table_btn-svg-3 {
+    position: absolute;
+    top: 22px;
+    left: 62px;
+}
+
+.table_btn-svg-4 {
+    position: absolute;
+    top: 21px;
+    left: 83px;
+}
+
+.table_btn-text {
+    width: 82px;
+    text-align: start;
 }
 
 .table_item {
     width: 100%;
+    height: 60px;
     display: flex;
     align-items: center;
     background: #e5e5e552;
@@ -110,12 +149,14 @@ ul {
 
 .table_header {
     display: flex;
-    align-items: flex-start;
     font-weight: 400;
     font-size: 12px;
     line-height: 16px;
     color: #B0B0B0;
     height: 33px;
+    margin-bottom: -12px;
+    padding-left: 12px;
+    align-items: flex-end;
 }
 
 .table-id {
@@ -143,3 +184,25 @@ ul {
 .table-options {
     width: 20%;
 }
+
+.btn-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn {
+    display: flex;
+    align-items: center;
+    padding: 8px 26.5px;
+    border: 1px solid #9873FF;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 19px;
+    color: #9873FF;
+    letter-spacing: 2px;
+    width: 175px;
+    justify-content: space-between;
+}
+
+.btn_add-client {}
