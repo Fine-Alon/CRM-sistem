@@ -21,7 +21,20 @@ export default
         this._surname = surname
         this._lastname = lastname
         this._contacts = contacts
+    }
 
+    get date() {
+
+        var today = date;
+        var dd = today.getDate();
+        var mm = today.getMonth() + 1;//January is 0!`
+
+        var yyyy = today.getFullYear();
+        if (dd < 10) { dd = '0' + dd }
+        if (mm < 10) { mm = '0' + mm }
+        var today = mm + '.' + dd + '.' + yyyy;
+
+        return today
     }
 
 
