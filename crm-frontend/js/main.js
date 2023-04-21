@@ -5,6 +5,10 @@ const SERVER_URI = 'http://localhost:3000/api/clients'
 
 let x = new Client('Rick', 'Briens', 'androiddev')
 
+let arrClient = [],
+    arrClientCopy = [...arrClient]
+
+
 // func's for work with server
 
 async function getServerData() {
@@ -45,9 +49,27 @@ async function addServerData(classClient) {
 
     return data
 }
-// addServerData(x)
 
-function $createClienHTML(obj) {
+// here we put to Copy of the main array Data from server
+const serverObjArray = await getServerData()
+
+serverObjArray.forEach(serverObj => {
+
+    const instanceClassClient = new Client(
+        serverObj.name,
+        serverObj.surname,
+        serverObj.lastname,
+        serverObj.contacts,
+        serverObj.id,
+        serverObj.createdAt,
+        serverObj.updatedAt
+    )
+
+    arrClientCopy.push(instanceClassClient)
+});
+console.log(arrClientCopy);
+
+function $createClienHTML(instanceClient) {
 
     const $item = document.createElement('li')
     const $clientID = document.createElement('span')
@@ -64,12 +86,12 @@ function $createClienHTML(obj) {
     const $clientOptionsChange = document.createElement('div')
     const $clientOptionsDelete = document.createElement('div')
 
-    $clientID.textContent = obj.id
-    $clientName.textContent = `${obj.surname}   ${obj.name}   ${obj.lastName}`
-    $clientDateCreating.textContent = Date.parse(obj.createdAt)
-    $clientTimeCreating.textContent = Date.parse(obj.createdAt)
-    $clientDateChange.textContent = Date.parse(obj.updatedAt)
-    $clientTimeChange.textContent = obj.data//=====here
+    $clientID.textContent = instanceClient._id
+    $clientName.textContent = `${instanceClient._surname}   ${instanceClient._name}   ${instanceClient._lastName}`
+    $clientDateCreating.textContent = instanceClient.createdDate
+    $clientTimeCreating.textContent = instanceClient.createdTime
+    $clientDateChange.textContent = instanceClient.updatedDate
+    $clientTimeChange.textContent = instanceClient.updatedTime
     $clientOptionsChange.textContent = 'Change'
     $clientOptionsDelete.textContent = 'Delete'
 
@@ -105,18 +127,15 @@ function $createClienHTML(obj) {
     return $item
 }
 
-async function renderTable() {
+function renderTable(arrClientCopy) {
 
     const $table = document.getElementById('table')
 
-    const serverObjArray = await getServerData()
+    arrClientCopy.forEach(instanceClient => {
 
-
-    serverObjArray.forEach(serverObj => {
-
-        const $listItem = $createClienHTML(serverObj)
+        const $listItem = $createClienHTML(instanceClient)
         $table.append($listItem)
     });
 }
 
-renderTable()
+renderTable(arrClientCopy)
