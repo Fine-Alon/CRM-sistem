@@ -50,12 +50,15 @@ ul {
     --color-grey-light: #B0B0B0;
     --color-white: #fff;
     --color-dark: #333333;
+    --color-light: #C8C5D1;
+    --color-lighter: #E7E5EB;
 }
 
 .container {
     max-width: 1024px;
     padding: 30px 0;
     margin: 0 auto;
+    position: relative;
 }
 
 .header {
@@ -221,6 +224,7 @@ ul {
     font-size: 14px;
     line-height: 19px;
     letter-spacing: 2px;
+    cursor: pointer;
 }
 
 .grey_12 {
@@ -248,4 +252,179 @@ ul {
     display: flex;
     align-items: center;
     color: var(--color-grey-light);
+}
+
+/*    forms    */
+
+
+
+.add__client-popup {
+    background-color: #00000080;
+    width: 100%;
+    height: 100vh;
+    z-index: 3;
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    transform: scale(0.5);
+    transition: opacity .6s ease;
+}
+
+.add__client-box {
+    background-color: var(--color-white);
+    width: 450px;
+    max-width: 450px;
+    min-height: 400px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    padding: 25px 30px;
+    opacity: 0;
+    visibility: hidden;
+    transform: scale(0.5);
+    transition: opacity .6s ease, transform .6s ease;
+}
+
+.add__client-popup.open-popup .add__client-box {
+    opacity: 1;
+    visibility: visible;
+    transform: scale(1);
+}
+
+.add__client-title {
+    align-self: flex-start;
+    display: block;
+    font-weight: 700;
+    font-size: 20px;
+    line-height: 25px;
+    color: var(--color-dark);
+    margin-bottom: 30px;
+}
+
+.btn-close {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    padding: 0;
+    margin: 0;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-close path {
+    transition: stroke .2s ease, stroke-width .2s ease;
+}
+
+.btn-close:hover path {
+    stroke: var(--color-violet);
+    stroke-width: 3px;
+}
+
+.add__client-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 5px;
+}
+
+.form-input-box {
+    position: relative;
+    width: 100%;
+    min-height: 30px;
+    margin-bottom: 20px;
+}
+
+.form-input-box:last-child {
+    margin-bottom: 25px;
+}
+
+.form-input-placeholder {
+    font-weight: 400;
+    font-size: 14px;
+    color: var(--color-grey-light);
+    position: absolute;
+
+}
+
+.form-input-placeholder-span {
+    color: var(--color-violet);
+}
+
+.form-input {
+    width: 100%;
+    border: none;
+    border-bottom: 1px solid var(--color-light);
+}
+
+.form-add-btn {
+    min-height: 35px;
+    width: 450px;
+    max-width: 450px;
+    margin-bottom: 25px;
+    background-color: var(--color-lighter);
+    border: none;
+    cursor: pointer;
+    transition: background-color .2s ease;
+}
+
+.form-add-btn svg {
+    margin-bottom: -2px;
+}
+
+.form-add-btn:hover {
+    background-color: var(--color-light);
+}
+
+.form-submit-btn {
+    border: none;
+    cursor: pointer;
+    background-color: var(--color-violet);
+    color: var(--color-white);
+    padding: 14px 50px;
+    font-weight: 600;
+    font-size: 14px;
+    border-radius: 2px;
+    margin-bottom: 8px;
+    transition: box-shadow .1s ease;
+}
+
+.form-submit-btn:hover {
+    box-shadow: 1px 1px 12px 1px rgba(171, 18, 231, 0.64);
+}
+
+.form-cancel {
+    margin: 0;
+    padding: 0;
+    border: none;
+    cursor: pointer;
+    border-bottom: 1px solid var(--color-dark);
+    background-color: transparent;
+    color: var(--color-dark);
+    line-height: 14px;
+    transition: padding-bottom .1s ease;
+}
+
+.form-cancel:hover {
+    padding-bottom: 1px;
+}
+
+
+
+/* open popup class */
+.open-popup {
+    opacity: 1;
+    visibility: visible;
+    transform: scale(1);
+}
+
+.placeholder-up{
+    top: -20px;
 }

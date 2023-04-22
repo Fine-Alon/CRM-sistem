@@ -2,6 +2,23 @@ import Client from './client.js';
 
 // global variables
 const SERVER_URI = 'http://localhost:3000/api/clients'
+let btnAddClient = document.getElementById('btn_add-client'),
+    popUpAddClient = document.getElementById('add__client-popup'),
+    btnAddClientClose = document.getElementById('btn-close'),
+    btnCancel = document.getElementById('form-cancel'),
+    addInputSurname = document.getElementById('add__client-surname'),
+    addInputName = document.getElementById('add__client-name'),
+    addInputLastname = document.getElementById('add__client-lastname'),
+    inputSurname = document.getElementById('box-surname'),
+    inputName = document.getElementById('box-name'),
+    inputLastname = document.getElementById('box-lastname')
+
+inputLastname.addEventListener('mouseover', () => {
+    inputLastname.firstElementChild.classList.add('placeholder-up')
+    addInputLastname.addEventListener('input', () => {
+        inputLastname.firstElementChild.classList.add('placeholder-up')
+    })
+})
 
 let x = new Client('Rick', 'Briens', 'androiddev')
 
@@ -139,3 +156,19 @@ function renderTable(arrClientCopy) {
 }
 
 renderTable(arrClientCopy)
+
+
+
+// buttons
+btnAddClient.addEventListener('click', () => {
+    popUpAddClient.classList.add('open-popup')
+})
+
+btnAddClientClose.addEventListener('click', () => {
+    popUpAddClient.classList.remove('open-popup')
+})
+
+btnCancel.addEventListener('click', () => {
+    popUpAddClient.classList.remove('open-popup')
+})
+
