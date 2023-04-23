@@ -16,7 +16,8 @@ const SERVER_URI = 'http://localhost:3000/api/clients',
     inputName = document.getElementById('box-name'),
     inputLastname = document.getElementById('box-lastname')
 
-let checkServerData = await getServerData()
+let checkServerData = await getServerData(),
+    currentServerObjID = null
 
 
 
@@ -35,16 +36,24 @@ async function getServerData() {
 
     return data
 }
+async function getServerDataByID(id) {
+    const response = await fetch(`${SERVER_URI}/${id}`, {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+    })
 
+    const data = await response.json()
+
+    return data
+}
 async function deleteAllServerData() {
 
     const dataServer = await getServerData()
     for (const servObj of dataServer) {
-        
+
         deleteObjFromServer(servObj.id)
     }
 }
-
 async function deleteObjFromServer(id) {
     const response = await fetch(`${SERVER_URI}/${id}`, {
         method: 'DELETE',
@@ -53,7 +62,6 @@ async function deleteObjFromServer(id) {
     const data = await response.json()
     return data
 }
-
 async function addServerData(instanceClient) {
     const response = await fetch(SERVER_URI, {
         method: 'POST',
@@ -67,6 +75,9 @@ async function addServerData(instanceClient) {
     })
 
     const data = await response.json()
+    // past this ID for next step... submit. Threr we need id for 
+    // retern 'Server Obj' to instance Client & put it to array
+    currentServerObjID = data.id
 
     return data
 }
@@ -89,7 +100,7 @@ function $createClienHTML(instanceClient) {
     const $clientOptionsDelete = document.createElement('div')
 
     $clientID.textContent = instanceClient._id
-    $clientName.textContent = `${instanceClient._surname}   ${instanceClient._name}   ${instanceClient._lastName}`
+    $clientName.textContent = `${instanceClient._surname}   ${instanceClient._name}   ${instanceClient._lastname}`
     $clientDateCreating.textContent = instanceClient.createdDate
     $clientTimeCreating.textContent = instanceClient.createdTime
     $clientDateChange.textContent = instanceClient.updatedDate
@@ -134,10 +145,8 @@ function renderTable(arrClientCopy) {
     const lines = $table.querySelectorAll('.table_item')
 
     for (let item = 1; item < lines.length; item++) {
-        console.log(lines[item]);
         lines[item].remove()
     }
-
     arrClientCopy.forEach(instanceClient => {
 
         const $listItem = $createClienHTML(instanceClient)
@@ -150,10 +159,9 @@ if (checkServerData) {
     for (const serverObj of checkServerData) {
 
         arrClientCopy.push(new Client(
-
             serverObj.name,
             serverObj.surname,
-            serverObj.lastname,
+            serverObj.lastName,
             serverObj.contacts,
             serverObj.id,
             serverObj.createdAt,
@@ -169,15 +177,29 @@ addClientForm.addEventListener('submit', async (event) => {
 
     let newClient = new Client(
         addInputName.value.trim(),
-        addInputName.value.trim(),
-        addInputName.value.trim()
+        addInputSurname.value.trim(),
+        addInputLastname.value.trim()
     )
 
     // FOR ADD NEW STUDENT TO SERVER...
-    addServerData(newClient)
+    let newClientID = await addServerData(newClient);
+    // get ID
+    const serverObj = await getServerDataByID(currentServerObjID)
+
+    console.log(currentServerObjID)
 
     // FOR ADD NEW STUDENT TO ARRAY[]
-    arrClientCopy.push(newClient)
+    arrClientCopy.push(
+        new Client(
+            serverObj.name,
+            serverObj.surname,
+            serverObj.lastName,
+            serverObj.contacts,
+            serverObj.id,
+            serverObj.createdAt,
+            serverObj.updatedAt
+        )
+    )
 
     renderTable(arrClientCopy)
 })
