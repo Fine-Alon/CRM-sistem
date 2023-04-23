@@ -1,7 +1,7 @@
 export default
     class Client {
 
-    constructor(name = 'name', surname = 'surname', lastname = 'lastname', contacts = [], id = 'id', createdAt = 'createdAt', updatedAt = 'updatedAt') {
+    constructor(name, surname, lastname = 'lastname', contacts = [], id = 'id', createdAt = 'createdAt', updatedAt = 'updatedAt') {
 
         this._id = id
         this._createdAt = createdAt

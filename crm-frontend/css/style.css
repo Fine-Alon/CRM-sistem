@@ -52,6 +52,8 @@ ul {
     --color-dark: #333333;
     --color-light: #C8C5D1;
     --color-lighter: #E7E5EB;
+    --color-focus-red: rgba(220, 20, 73, 0.603);
+
 }
 
 .container {
@@ -103,10 +105,11 @@ ul {
     display: flex;
     flex-direction: column;
     width: 100%;
-    min-width: 730px;
+    /* min-width: 730px; */
     height: 333px;
     background-color: var(--color-white);
     margin-bottom: 40px;
+    overflow-y: auto;
 }
 
 .table_btn {
@@ -308,6 +311,7 @@ ul {
 }
 
 .btn-close {
+    outline: none;
     position: absolute;
     top: 20px;
     right: 20px;
@@ -322,9 +326,19 @@ ul {
     transition: stroke .2s ease, stroke-width .2s ease;
 }
 
+.btn-close:focus path{
+    stroke: var(--color-focus-red);
+    stroke-width: 2px;
+}
+
 .btn-close:hover path {
     stroke: var(--color-violet);
     stroke-width: 3px;
+}
+
+.btn-close:active path{
+    stroke: var(--color-violet);
+    stroke-width: 1px;
 }
 
 .add__client-form {
@@ -362,6 +376,7 @@ ul {
     width: 100%;
     border: none;
     border-bottom: 1px solid var(--color-light);
+    outline: none;
 }
 
 .form-add-btn {
@@ -415,8 +430,6 @@ ul {
 .form-cancel:hover {
     padding-bottom: 1px;
 }
-
-
 
 /* open popup class */
 .open-popup {

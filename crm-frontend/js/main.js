@@ -1,11 +1,14 @@
 import Client from './client.js';
 
 // global variables
-const SERVER_URI = 'http://localhost:3000/api/clients'
-let btnAddClient = document.getElementById('btn_add-client'),
+const SERVER_URI = 'http://localhost:3000/api/clients',
+    $table = document.getElementById('table'),
+    btnAddClient = document.getElementById('btn_add-client'),
     popUpAddClient = document.getElementById('add__client-popup'),
     btnAddClientClose = document.getElementById('btn-close'),
     btnCancel = document.getElementById('form-cancel'),
+    addClientForm = document.getElementById('add__client-form'),
+    addFormBox = document.getElementById('add__client-box'),
     addInputSurname = document.getElementById('add__client-surname'),
     addInputName = document.getElementById('add__client-name'),
     addInputLastname = document.getElementById('add__client-lastname'),
@@ -13,21 +16,15 @@ let btnAddClient = document.getElementById('btn_add-client'),
     inputName = document.getElementById('box-name'),
     inputLastname = document.getElementById('box-lastname')
 
-inputLastname.addEventListener('mouseover', () => {
-    inputLastname.firstElementChild.classList.add('placeholder-up')
-    addInputLastname.addEventListener('input', () => {
-        inputLastname.firstElementChild.classList.add('placeholder-up')
-    })
-})
+let checkServerData = await getServerData()
 
-let x = new Client('Rick', 'Briens', 'androiddev')
+
 
 let arrClient = [],
     arrClientCopy = [...arrClient]
 
 
 // func's for work with server
-
 async function getServerData() {
     const response = await fetch(SERVER_URI, {
         method: 'GET',
@@ -35,56 +32,44 @@ async function getServerData() {
     })
 
     const data = await response.json()
-    console.log(data)
 
     return data
 }
 
-async function addServerData(classClient) {
+async function deleteAllServerData() {
+
+    const dataServer = await getServerData()
+    for (const servObj of dataServer) {
+        
+        deleteObjFromServer(servObj.id)
+    }
+}
+
+async function deleteObjFromServer(id) {
+    const response = await fetch(`${SERVER_URI}/${id}`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' }
+    })
+    const data = await response.json()
+    return data
+}
+
+async function addServerData(instanceClient) {
     const response = await fetch(SERVER_URI, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-            name: x._name,
-            surname: x._surname,
-            lastName: x._lastname,
-            contacts: [
-                {
-                    type: 'Email',
-                    value: 'abc@xyz.com'
-                },
-                {
-                    type: 'Facebook',
-                    value: 'https://facebook.com/vasiliy-pupkin-the-best'
-                }
-            ]
+            name: instanceClient._name,
+            surname: instanceClient._surname,
+            lastName: instanceClient._lastname,
+            contacts: []
         })
     })
 
     const data = await response.json()
-    console.log(data)
 
     return data
 }
-
-// here we put to Copy of the main array Data from server
-const serverObjArray = await getServerData()
-
-serverObjArray.forEach(serverObj => {
-
-    const instanceClassClient = new Client(
-        serverObj.name,
-        serverObj.surname,
-        serverObj.lastname,
-        serverObj.contacts,
-        serverObj.id,
-        serverObj.createdAt,
-        serverObj.updatedAt
-    )
-
-    arrClientCopy.push(instanceClassClient)
-});
-console.log(arrClientCopy);
 
 function $createClienHTML(instanceClient) {
 
@@ -146,7 +131,12 @@ function $createClienHTML(instanceClient) {
 
 function renderTable(arrClientCopy) {
 
-    const $table = document.getElementById('table')
+    const lines = $table.querySelectorAll('.table_item')
+
+    for (let item = 1; item < lines.length; item++) {
+        console.log(lines[item]);
+        lines[item].remove()
+    }
 
     arrClientCopy.forEach(instanceClient => {
 
@@ -155,20 +145,97 @@ function renderTable(arrClientCopy) {
     });
 }
 
+// here we put to 'Copy Main Array' data from server
+if (checkServerData) {
+    for (const serverObj of checkServerData) {
+
+        arrClientCopy.push(new Client(
+
+            serverObj.name,
+            serverObj.surname,
+            serverObj.lastname,
+            serverObj.contacts,
+            serverObj.id,
+            serverObj.createdAt,
+            serverObj.updatedAt
+        ))
+    }
+}
 renderTable(arrClientCopy)
 
+// Adding new client to server then it will be taken as Instance to Array Copy 
+addClientForm.addEventListener('submit', async (event) => {
+    event.preventDefault()
 
+    let newClient = new Client(
+        addInputName.value.trim(),
+        addInputName.value.trim(),
+        addInputName.value.trim()
+    )
 
-// buttons
+    // FOR ADD NEW STUDENT TO SERVER...
+    addServerData(newClient)
+
+    // FOR ADD NEW STUDENT TO ARRAY[]
+    arrClientCopy.push(newClient)
+
+    renderTable(arrClientCopy)
+})
+
+// buttons & work with pop-up windows (close, moving placeholders)
 btnAddClient.addEventListener('click', () => {
     popUpAddClient.classList.add('open-popup')
 })
 
 btnAddClientClose.addEventListener('click', () => {
+    inputLastname.firstElementChild.classList.remove('placeholder-up')
+    inputSurname.firstElementChild.classList.remove('placeholder-up')
+    inputName.firstElementChild.classList.remove('placeholder-up')
     popUpAddClient.classList.remove('open-popup')
 })
 
 btnCancel.addEventListener('click', () => {
+    inputLastname.firstElementChild.classList.remove('placeholder-up')
+    inputSurname.firstElementChild.classList.remove('placeholder-up')
+    inputName.firstElementChild.classList.remove('placeholder-up')
     popUpAddClient.classList.remove('open-popup')
 })
 
+// add form listeners
+popUpAddClient.addEventListener('click', (click) => {
+    if (click.target == popUpAddClient) {
+        inputLastname.firstElementChild.classList.remove('placeholder-up')
+        inputSurname.firstElementChild.classList.remove('placeholder-up')
+        inputName.firstElementChild.classList.remove('placeholder-up')
+        popUpAddClient.classList.remove('open-popup')
+    }
+})
+
+// Escape btn close 
+window.addEventListener('keydown', (click) => {
+    if (click.key === 'Escape') {
+        inputLastname.firstElementChild.classList.remove('placeholder-up')
+        inputSurname.firstElementChild.classList.remove('placeholder-up')
+        inputName.firstElementChild.classList.remove('placeholder-up')
+        popUpAddClient.classList.remove('open-popup')
+    }
+})
+
+inputLastname.addEventListener('mouseover', () => {
+    inputLastname.firstElementChild.classList.add('placeholder-up')
+    addInputLastname.addEventListener('input', () => {
+        inputLastname.firstElementChild.classList.add('placeholder-up')
+    })
+})
+inputSurname.addEventListener('mouseover', () => {
+    inputSurname.firstElementChild.classList.add('placeholder-up')
+    addInputSurname.addEventListener('input', () => {
+        inputSurname.firstElementChild.classList.add('placeholder-up')
+    })
+})
+inputName.addEventListener('mouseover', () => {
+    inputName.firstElementChild.classList.add('placeholder-up')
+    addInputName.addEventListener('input', () => {
+        inputName.firstElementChild.classList.add('placeholder-up')
+    })
+})
