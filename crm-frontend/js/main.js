@@ -5,8 +5,11 @@ const SERVER_URI = 'http://localhost:3000/api/clients',
     $table = document.getElementById('table'),
     btnAddClient = document.getElementById('btn_add-client'),
     popUpAddClient = document.getElementById('add__client-popup'),
-    btnAddClientClose = document.getElementById('btn-close'),
-    btnCancel = document.getElementById('form-cancel'),
+    popUpDeleteClient = document.getElementById('delete__client-popup'),
+    btnAddClientClose = document.getElementById('btn-close-add'),
+    btnDeleteClientClose = document.getElementById('btn-close-delete'),
+    addClientBtnCancel = document.getElementById('form-cancel'),
+    deleteClientBtnCancel = document.getElementById('delete__client-cancel'),
     addClientForm = document.getElementById('add__client-form'),
     addFormBox = document.getElementById('add__client-box'),
     addInputSurname = document.getElementById('add__client-surname'),
@@ -14,7 +17,10 @@ const SERVER_URI = 'http://localhost:3000/api/clients',
     addInputLastname = document.getElementById('add__client-lastname'),
     inputSurname = document.getElementById('box-surname'),
     inputName = document.getElementById('box-name'),
-    inputLastname = document.getElementById('box-lastname')
+    inputLastname = document.getElementById('box-lastname'),
+    deleteClientBtnDelete = document.getElementById('delete__client-delete-btn')
+// deleteTableBtn = document.getElementById('delete__client-popup'),
+// changeTableBtn = document.getElementById('delete__client-popup')
 
 let checkServerData = await getServerData(),
     currentServerObjID = null
@@ -81,7 +87,6 @@ async function addServerData(instanceClient) {
 
     return data
 }
-
 function $createClienHTML(instanceClient) {
 
     const $item = document.createElement('li')
@@ -96,8 +101,8 @@ function $createClienHTML(instanceClient) {
     const $clientContacts = document.createElement('ul')
     const $clientContactsItem = document.createElement('li')
     const $clientOptions = document.createElement('div')
-    const $clientOptionsChange = document.createElement('div')
-    const $clientOptionsDelete = document.createElement('div')
+    const $clientOptionsChange = document.createElement('button')
+    const $clientOptionsDelete = document.createElement('button')
 
     $clientID.textContent = instanceClient._id
     $clientName.textContent = `${instanceClient._surname}   ${instanceClient._name}   ${instanceClient._lastname}`
@@ -120,8 +125,17 @@ function $createClienHTML(instanceClient) {
     $clientContacts.classList.add('table-contacts', 'wrapper')
     $clientContactsItem.classList.add('wrapper')
     $clientOptions.classList.add('table-options', 'wrapper')
-    $clientOptionsChange.classList.add('dark_14')
-    $clientOptionsDelete.classList.add('dark_14')
+    $clientOptionsChange.classList.add('dark_14', 'table_option', 'table_change')
+    $clientOptionsDelete.classList.add('dark_14', 'table_option', 'table_delete')
+
+    $clientOptionsDelete.addEventListener('click', () => {
+        popUpDeleteClient.classList.add('open-popup')
+        deleteClientBtnDelete.addEventListener('click', () => {
+            deleteObjFromServer(instanceClient._id)
+            $item.remove()
+            popUpDeleteClient.classList.remove('open-popup')
+        })
+    })
 
     $clientCreating.append($clientDateCreating)
     $clientCreating.append($clientTimeCreating)
@@ -144,9 +158,13 @@ function renderTable(arrClientCopy) {
 
     const lines = $table.querySelectorAll('.table_item')
 
-    for (let item = 1; item < lines.length; item++) {
-        lines[item].remove()
+    for (const line of lines) {
+        line.remove()
     }
+
+    // for (let item = 1; item < lines.length; item++) {
+    //     lines[item].remove()
+    // }
     arrClientCopy.forEach(instanceClient => {
 
         const $listItem = $createClienHTML(instanceClient)
@@ -216,11 +234,19 @@ btnAddClientClose.addEventListener('click', () => {
     popUpAddClient.classList.remove('open-popup')
 })
 
-btnCancel.addEventListener('click', () => {
+btnDeleteClientClose.addEventListener('click', () => {
+    popUpDeleteClient.classList.remove('open-popup')
+})
+
+addClientBtnCancel.addEventListener('click', () => {
     inputLastname.firstElementChild.classList.remove('placeholder-up')
     inputSurname.firstElementChild.classList.remove('placeholder-up')
     inputName.firstElementChild.classList.remove('placeholder-up')
     popUpAddClient.classList.remove('open-popup')
+})
+
+deleteClientBtnCancel.addEventListener('click', () => {
+    popUpDeleteClient.classList.remove('open-popup')
 })
 
 // add form listeners
@@ -230,6 +256,7 @@ popUpAddClient.addEventListener('click', (click) => {
         inputSurname.firstElementChild.classList.remove('placeholder-up')
         inputName.firstElementChild.classList.remove('placeholder-up')
         popUpAddClient.classList.remove('open-popup')
+        popUpDeleteClient.classList.remove('open-popup')
     }
 })
 
@@ -240,6 +267,7 @@ window.addEventListener('keydown', (click) => {
         inputSurname.firstElementChild.classList.remove('placeholder-up')
         inputName.firstElementChild.classList.remove('placeholder-up')
         popUpAddClient.classList.remove('open-popup')
+        popUpDeleteClient.classList.remove('open-popup')
     }
 })
 
