@@ -46,6 +46,7 @@ ul {
 
 :root {
     --color-violet: #9873FF;
+    --color-violet-dark: #8052FF;
     --color-grey: #e5e5e552;
     --color-grey-light: #B0B0B0;
     --color-white: #fff;
@@ -286,7 +287,7 @@ ul {
     justify-content: center;
     opacity: 0;
     visibility: hidden;
-    transform: scale(0.5);
+    transform: scale(0);
     transition: opacity .6s ease;
 }
 
@@ -302,7 +303,7 @@ ul {
     padding: 25px 30px;
     opacity: 0;
     visibility: hidden;
-    transform: scale(0.5);
+    transform: scale(0);
     transition: opacity .6s ease, transform .6s ease;
 }
 
@@ -428,6 +429,43 @@ ul {
     box-shadow: 1px 1px 12px 1px rgba(171, 18, 231, 0.64);
 }
 
+.form-submit-btn-loading {
+    border: none;
+    cursor: no-drop;
+    background-color: var(--color-violet-dark);
+    color: var(--color-white);
+    padding: 14px 50px;
+    font-weight: 600;
+    font-size: 14px;
+    border-radius: 2px;
+    margin-bottom: 8px;
+    transition: box-shadow .1s ease;
+    position: relative;
+}
+
+.form-submit-btn-loading:after {
+    content: "";
+    display: block;
+    position: absolute;
+    top: 60%;
+    left: 30%;
+    width: 12px;
+    height: 12px;
+    margin: -10px 0 0 -10px;
+    border-radius: 50%;
+    border: 3px solid transparent;
+    border-top-color: #B89EFF;
+    border-left-color: #B89EFF;
+    border-bottom-color: #B89EFF;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
 .form-cancel {
     margin: 0;
     padding: 0;
@@ -492,13 +530,13 @@ ul {
     justify-content: center;
     opacity: 0;
     visibility: hidden;
-    transform: scale(0.5);
+    transform: scale(0);
     transition: opacity .6s ease;
 }
 
 .delete__client-box {
     position: relative;
-    display: flex;
+    display: none;
     align-items: center;
     justify-content: center;
     flex-direction: column;
@@ -508,7 +546,7 @@ ul {
     background-color: var(--color-white);
     opacity: 0;
     visibility: hidden;
-    transform: scale(0.5);
+    transform: scale(0);
     transition: opacity .6s ease, transform .6s ease;
 }
 
@@ -528,10 +566,11 @@ ul {
     color: var(--color-dark);
 }
 
-.delete__client-popup.open-popup .delete__client-box{
+.delete__client-popup.open-popup .delete__client-box {
     opacity: 1;
     visibility: visible;
     transform: scale(1);
+    display: flex;
 }
 
 

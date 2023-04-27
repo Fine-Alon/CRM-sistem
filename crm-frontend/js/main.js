@@ -11,6 +11,7 @@ const SERVER_URI = 'http://localhost:3000/api/clients',
     addClientBtnCancel = document.getElementById('form-cancel'),
     deleteClientBtnCancel = document.getElementById('delete__client-cancel'),
     addClientForm = document.getElementById('add__client-form'),
+    addClientSubmitBtn = document.getElementById('add__client-submit-btn'),
     addFormBox = document.getElementById('add__client-box'),
     addInputSurname = document.getElementById('add__client-surname'),
     addInputName = document.getElementById('add__client-name'),
@@ -18,7 +19,8 @@ const SERVER_URI = 'http://localhost:3000/api/clients',
     inputSurname = document.getElementById('box-surname'),
     inputName = document.getElementById('box-name'),
     inputLastname = document.getElementById('box-lastname'),
-    deleteClientBtnDelete = document.getElementById('delete__client-delete-btn')
+    deleteClientBtnDelete = document.getElementById('delete__client-delete-btn'),
+    deleteClientBox = document.getElementById('delete__client-box')
 // deleteTableBtn = document.getElementById('delete__client-popup'),
 // changeTableBtn = document.getElementById('delete__client-popup')
 
@@ -128,13 +130,23 @@ function $createClienHTML(instanceClient) {
     $clientOptionsChange.classList.add('dark_14', 'table_option', 'table_change')
     $clientOptionsDelete.classList.add('dark_14', 'table_option', 'table_delete')
 
+    // delete from: 1-server, 2-arrClientCopy, 3-DOM
     $clientOptionsDelete.addEventListener('click', () => {
         popUpDeleteClient.classList.add('open-popup')
         deleteClientBtnDelete.addEventListener('click', () => {
             deleteObjFromServer(instanceClient._id)
+            const indexOfArrayElementToRemove = arrClientCopy.findIndex(el => el._id === instanceClient._id)
+            if (indexOfArrayElementToRemove !== -1) { arrClientCopy.splice(indexOfArrayElementToRemove, 1) }
             $item.remove()
             popUpDeleteClient.classList.remove('open-popup')
         })
+    })
+    // Enter btn for Delete
+    window.addEventListener('keydown', (event) => {
+        if (deleteClientBox.style.display == 'flex' || event.key == 'Enter') {
+            deleteClientBtnDelete.click()
+            console.log('click was');
+        }
     })
 
     $clientCreating.append($clientDateCreating)
@@ -200,11 +212,9 @@ addClientForm.addEventListener('submit', async (event) => {
     )
 
     // FOR ADD NEW STUDENT TO SERVER...
-    let newClientID = await addServerData(newClient);
+    await addServerData(newClient);
     // get ID
     const serverObj = await getServerDataByID(currentServerObjID)
-
-    console.log(currentServerObjID)
 
     // FOR ADD NEW STUDENT TO ARRAY[]
     arrClientCopy.push(
@@ -219,7 +229,21 @@ addClientForm.addEventListener('submit', async (event) => {
         )
     )
 
-    renderTable(arrClientCopy)
+    // animation for loading
+    addClientSubmitBtn.classList.remove('form-submit-btn')
+    addClientSubmitBtn.classList.add('form-submit-btn-loading')
+    addInputName.value = ''
+    addInputSurname.value = ''
+    addInputLastname.value = ''
+    setTimeout(() => {
+        addClientSubmitBtn.classList.remove('form-submit-btn-loading')
+        addClientSubmitBtn.classList.add('form-submit-btn')
+        renderTable(arrClientCopy)
+        setTimeout(() => {
+            popUpAddClient.classList.remove('open-popup')
+        }, 200)
+    }, 1500)
+
 })
 
 // buttons & work with pop-up windows (close, moving placeholders)
@@ -234,19 +258,11 @@ btnAddClientClose.addEventListener('click', () => {
     popUpAddClient.classList.remove('open-popup')
 })
 
-btnDeleteClientClose.addEventListener('click', () => {
-    popUpDeleteClient.classList.remove('open-popup')
-})
-
 addClientBtnCancel.addEventListener('click', () => {
     inputLastname.firstElementChild.classList.remove('placeholder-up')
     inputSurname.firstElementChild.classList.remove('placeholder-up')
     inputName.firstElementChild.classList.remove('placeholder-up')
     popUpAddClient.classList.remove('open-popup')
-})
-
-deleteClientBtnCancel.addEventListener('click', () => {
-    popUpDeleteClient.classList.remove('open-popup')
 })
 
 // add form listeners
@@ -256,7 +272,6 @@ popUpAddClient.addEventListener('click', (click) => {
         inputSurname.firstElementChild.classList.remove('placeholder-up')
         inputName.firstElementChild.classList.remove('placeholder-up')
         popUpAddClient.classList.remove('open-popup')
-        popUpDeleteClient.classList.remove('open-popup')
     }
 })
 
@@ -288,4 +303,20 @@ inputName.addEventListener('mouseover', () => {
     addInputName.addEventListener('input', () => {
         inputName.firstElementChild.classList.add('placeholder-up')
     })
+})
+
+
+// delete form listeners
+popUpDeleteClient.addEventListener('click', (click) => {
+    if (click.target == popUpDeleteClient) {
+        popUpDeleteClient.classList.remove('open-popup')
+    }
+})
+
+btnDeleteClientClose.addEventListener('click', () => {
+    popUpDeleteClient.classList.remove('open-popup')
+})
+
+deleteClientBtnCancel.addEventListener('click', () => {
+    popUpDeleteClient.classList.remove('open-popup')
 })
