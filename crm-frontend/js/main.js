@@ -11,6 +11,7 @@ const SERVER_URI = 'http://localhost:3000/api/clients',
     addClientBtnCancel = document.getElementById('form-cancel'),
     deleteClientBtnCancel = document.getElementById('delete__client-cancel'),
     addClientForm = document.getElementById('add__client-form'),
+    addClientAddContact = document.getElementById('add__client-add-contact'),
     addClientSubmitBtn = document.getElementById('add__client-submit-btn'),
     addFormBox = document.getElementById('add__client-box'),
     addInputSurname = document.getElementById('add__client-surname'),
@@ -133,20 +134,13 @@ function $createClienHTML(instanceClient) {
     // delete from: 1-server, 2-arrClientCopy, 3-DOM
     $clientOptionsDelete.addEventListener('click', () => {
         popUpDeleteClient.classList.add('open-popup')
-        deleteClientBtnDelete.addEventListener('click', () => {
-            deleteObjFromServer(instanceClient._id)
+        deleteClientBtnDelete.addEventListener('click', async () => {
+            await deleteObjFromServer(instanceClient._id)
             const indexOfArrayElementToRemove = arrClientCopy.findIndex(el => el._id === instanceClient._id)
             if (indexOfArrayElementToRemove !== -1) { arrClientCopy.splice(indexOfArrayElementToRemove, 1) }
             $item.remove()
             popUpDeleteClient.classList.remove('open-popup')
         })
-    })
-    // Enter btn for Delete
-    window.addEventListener('keydown', (event) => {
-        if (deleteClientBox.style.display == 'flex' || event.key == 'Enter') {
-            deleteClientBtnDelete.click()
-            console.log('click was');
-        }
     })
 
     $clientCreating.append($clientDateCreating)
@@ -235,6 +229,9 @@ addClientForm.addEventListener('submit', async (event) => {
     addInputName.value = ''
     addInputSurname.value = ''
     addInputLastname.value = ''
+    inputLastname.firstElementChild.classList.remove('placeholder-up')
+    inputSurname.firstElementChild.classList.remove('placeholder-up')
+    inputName.firstElementChild.classList.remove('placeholder-up')
     setTimeout(() => {
         addClientSubmitBtn.classList.remove('form-submit-btn-loading')
         addClientSubmitBtn.classList.add('form-submit-btn')
@@ -272,6 +269,13 @@ popUpAddClient.addEventListener('click', (click) => {
         inputSurname.firstElementChild.classList.remove('placeholder-up')
         inputName.firstElementChild.classList.remove('placeholder-up')
         popUpAddClient.classList.remove('open-popup')
+    }
+})
+
+// 'Enter' btn for Delete
+window.addEventListener('keydown', (event) => {
+    if (popUpDeleteClient.classList.contains('open-popup') && event.key == 'Enter') {
+        deleteClientBtnDelete.click()
     }
 })
 
@@ -320,3 +324,45 @@ btnDeleteClientClose.addEventListener('click', () => {
 deleteClientBtnCancel.addEventListener('click', () => {
     popUpDeleteClient.classList.remove('open-popup')
 })
+
+// contacts
+
+const element = document.querySelector('.js-choice');
+const choices = new Choices(element, {
+    silent: false,
+    items: [],
+    choices: [],
+    renderChoiceLimit: -1,
+    maxItemCount: -1,
+    addItems: true,
+    addItemFilter: null,
+    removeItems: true,
+    removeItemButton: false,
+    editItems: false,
+    allowHTML: true,
+    duplicateItemsAllowed: true,
+    delimiter: ',',
+    paste: true,
+    searchEnabled: false,
+    searchChoices: false,
+    searchFloor: 1,
+    searchResultLimit: 4,
+    searchFields: ['label', 'value'],
+    position: 'auto',
+    resetScrollPosition: true,
+    shouldSort: true,
+    shouldSortItems: false,
+    placeholder: true,
+    placeholderValue: null,
+    searchPlaceholderValue: null,
+    prependValue: null,
+    appendValue: null,
+    renderSelectedChoices: 'auto',
+    loadingText: 'Loading...',
+    noResultsText: 'No results found',
+    noChoicesText: 'No choices to choose from',
+    itemSelectText: '',
+    uniqueItemText: 'Only unique values can be added',
+    customAddItemText: 'Only values matching specific conditions can be added',
+});
+

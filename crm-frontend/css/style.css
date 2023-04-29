@@ -51,8 +51,8 @@ ul {
     --color-grey-light: #B0B0B0;
     --color-white: #fff;
     --color-dark: #333333;
-    --color-light: #C8C5D1;
-    --color-lighter: #E7E5EB;
+    --color-light: #dddddd;
+    --color-lighter: #eaeaea;
     --color-focus-red: rgba(220, 20, 73, 0.603);
 
 }
@@ -583,4 +583,148 @@ ul {
 
 .placeholder-up {
     transform: translateY(-20px);
+}
+
+/* form contact */
+
+.form-contact {
+    width: 450px;
+    max-width: 450px;
+    padding: 25px 30px;
+    display: flex;
+    justify-content: center;
+    min-height: 35px;
+    background-color: var(--color-lighter);
+    border: none;
+}
+
+.choices {
+    width: 128px;
+    height: 39px;
+    border-color: var(--color-grey-light);
+}
+
+.choices[data-type*=select-one] {
+    cursor: pointer;
+    border: 1px solid var(--color-grey-light);
+}
+
+.choices[data-type*=select-one].is-open::after {
+    border-color: transparent transparent var(--color-violet) var(--color-violet);
+    transform: rotate(135deg);
+    margin-top: -3px;
+}
+
+.choices[data-type*=select-one]::after {
+    content: "";
+    height: 8.5px;
+    width: 8.5px;
+    border-width: 2px;
+    border-style: solid;
+    border-color: transparent transparent var(--color-violet) var(--color-violet);
+    position: absolute;
+    right: 11.5px;
+    top: 45%;
+    margin-top: -2.5px;
+    pointer-events: none;
+    transform: rotate(315deg);
+    transition: transform .3s ease;
+}
+
+.choices__inner {
+    background-color: var(--color-light);
+    border: 1px solid var(--color-grey);
+}
+
+.choices__list--dropdown,
+.choices__list[aria-expanded] {
+    visibility: hidden;
+    z-index: 1;
+    position: absolute;
+    width: 100%;
+    background-color: var(--color-lighter);
+    border: 1px solid var(--color-grey-light);
+    top: 100%;
+    margin-top: -1px;
+    border-bottom-left-radius: 2.5px;
+    border-bottom-right-radius: 2.5px;
+    overflow: hidden;
+    word-break: unset;
+    will-change: visibility;
+}
+
+.form-contact-input-box {
+    width: 265px;
+    display: flex;
+    flex-direction: column;
+}
+
+.form-contact-input {
+    width: 239px;
+}
+
+.contact-box {
+    height: 40px;
+    display: flex;
+    margin-left: -1px;
+}
+
+.contact-box-btn {
+    width: 27px;
+    margin-left: -1px;
+}
+
+/* form-contact-tabs */
+
+.form-contact-tabs {
+    font-size: 0;
+    max-width: 350px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.form-contact-tabs>input[type="radio"] {
+    display: none;
+}
+
+.form-contact-tabs>div {
+    /* скрыть контент по умолчанию */
+    display: none;
+    border: 1px solid #e0e0e0;
+    padding: 10px 15px;
+    font-size: 16px;
+}
+
+/* отобразить контент, связанный с вабранной радиокнопкой (input type="radio") */
+#tab-btn-1:checked~#contact-box-1,
+#tab-btn-2:checked~#contact-box-2,
+#tab-btn-3:checked~#contact-box-3,
+#tab-btn-4:checked~#contact-box-4,
+#tab-btn-5:checked~#contact-box-5 {
+    display: block;
+}
+
+.form-contact-tabs>label {
+    display: inline-block;
+    text-align: center;
+    vertical-align: middle;
+    user-select: none;
+    background-color: #f5f5f5;
+    border: 1px solid #e0e0e0;
+    padding: 2px 8px;
+    font-size: 16px;
+    line-height: 1.5;
+    transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out;
+    cursor: pointer;
+    position: relative;
+    top: 1px;
+}
+
+.form-contact-tabs>label:not(:first-of-type) {
+    border-left: none;
+}
+
+.form-contact-tabs>input[type="radio"]:checked+label {
+    background-color: #fff;
+    border-bottom: 1px solid #fff;
 }
