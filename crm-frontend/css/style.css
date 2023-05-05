@@ -272,8 +272,6 @@ ul {
 
 /*    forms    */
 
-
-
 .add__client-popup {
     background-color: #00000080;
     width: 100%;
@@ -393,7 +391,7 @@ ul {
     outline: none;
 }
 
-.form-add-btn {
+.add__client_add_contact_btn {
     min-height: 35px;
     width: 450px;
     max-width: 450px;
@@ -404,11 +402,11 @@ ul {
     transition: background-color .2s ease;
 }
 
-.form-add-btn svg {
+.add__client_add_contact_btn svg {
     margin-bottom: -2px;
 }
 
-.form-add-btn:hover {
+.add__client_add_contact_btn:hover {
     background-color: var(--color-light);
 }
 
@@ -586,10 +584,16 @@ ul {
 }
 
 /* form contact */
+.form__contact__wrapper {
+    display: flex;
+    width: 100%;
+    margin-bottom: 15px;
+}
 
-.form-contact {
+.form__contact {
     width: 450px;
     max-width: 450px;
+    height: 87px;
     padding: 25px 30px;
     display: flex;
     justify-content: center;
@@ -598,69 +602,49 @@ ul {
     border: none;
 }
 
-.choices {
-    width: 128px;
-    height: 39px;
-    border-color: var(--color-grey-light);
-}
-
-.choices[data-type*=select-one] {
-    cursor: pointer;
+.form__contact_selector {
     border: 1px solid var(--color-grey-light);
+    width: 35%;
+    outline: none;
+    background-color: var(--color-light);
+    font-weight: 400;
+    font-size: 12px;
+    color: var(--color-dark);
+    padding: 5px 12px;
 }
 
-.choices[data-type*=select-one].is-open::after {
-    border-color: transparent transparent var(--color-violet) var(--color-violet);
-    transform: rotate(135deg);
-    margin-top: -3px;
-}
-
-.choices[data-type*=select-one]::after {
-    content: "";
-    height: 8.5px;
-    width: 8.5px;
-    border-width: 2px;
-    border-style: solid;
-    border-color: transparent transparent var(--color-violet) var(--color-violet);
-    position: absolute;
-    right: 11.5px;
-    top: 45%;
-    margin-top: -2.5px;
-    pointer-events: none;
-    transform: rotate(315deg);
-    transition: transform .3s ease;
+.choices {
+    width: 35%;
+    outline: none;
+    background-color: var(--color-light);
+    color: var(--color-dark);
+    height: 38px;
 }
 
 .choices__inner {
-    background-color: var(--color-light);
-    border: 1px solid var(--color-grey);
-}
-
-.choices__list--dropdown,
-.choices__list[aria-expanded] {
-    visibility: hidden;
-    z-index: 1;
-    position: absolute;
-    width: 100%;
-    background-color: var(--color-lighter);
     border: 1px solid var(--color-grey-light);
-    top: 100%;
-    margin-top: -1px;
-    border-bottom-left-radius: 2.5px;
-    border-bottom-right-radius: 2.5px;
-    overflow: hidden;
-    word-break: unset;
-    will-change: visibility;
+    width: 100%;
+    outline: none;
+    background-color: var(--color-light);
+    font-weight: 400;
+    font-size: 12px;
+    color: var(--color-dark);
+    height: 38px;
 }
 
-.form-contact-input-box {
+
+.form__contact-input-box {
     width: 265px;
     display: flex;
     flex-direction: column;
 }
 
-.form-contact-input {
+.form__contact-input {
     width: 239px;
+    border: 1px solid var(--color-grey-light);
+    border-radius: 0;
+    margin-left: -1px;
+    outline: none;
 }
 
 .contact-box {
@@ -670,61 +654,49 @@ ul {
 }
 
 .contact-box-btn {
+    cursor: pointer;
     width: 27px;
     margin-left: -1px;
+    background-image: url(../img/X-dell-btn.svg);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 12px;
+    outline: none;
+    border: 1px solid var(--color-grey-light);
+    background-color: var(--color-light);
 }
 
-/* form-contact-tabs */
 
-.form-contact-tabs {
-    font-size: 0;
-    max-width: 350px;
-    margin-left: auto;
-    margin-right: auto;
-}
-
-.form-contact-tabs>input[type="radio"] {
-    display: none;
-}
-
-.form-contact-tabs>div {
-    /* скрыть контент по умолчанию */
-    display: none;
-    border: 1px solid #e0e0e0;
-    padding: 10px 15px;
-    font-size: 16px;
-}
-
-/* отобразить контент, связанный с вабранной радиокнопкой (input type="radio") */
-#tab-btn-1:checked~#contact-box-1,
-#tab-btn-2:checked~#contact-box-2,
-#tab-btn-3:checked~#contact-box-3,
-#tab-btn-4:checked~#contact-box-4,
-#tab-btn-5:checked~#contact-box-5 {
-    display: block;
-}
-
-.form-contact-tabs>label {
-    display: inline-block;
-    text-align: center;
-    vertical-align: middle;
-    user-select: none;
-    background-color: #f5f5f5;
-    border: 1px solid #e0e0e0;
-    padding: 2px 8px;
-    font-size: 16px;
-    line-height: 1.5;
-    transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out;
-    cursor: pointer;
+.selector__button {
     position: relative;
-    top: 1px;
+    background-color: var(--color-light);
+    border-color: var(--color-grey-light);
+    border-width: 1px;
+    padding: 15px;
+    padding-right: 30px;
+    font-size: 12px;
+    color: rgb(15, 8, 8);
+    transition: background-color .2s;
+    cursor: pointer;
+    z-index: 2;
+    width: 100%;
+    height: 100%;
+    text-align: start;
 }
 
-.form-contact-tabs>label:not(:first-of-type) {
-    border-left: none;
+.selector__button:hover {
+    background-color: rgba(255, 255, 255, .2);
 }
 
-.form-contact-tabs>input[type="radio"]:checked+label {
-    background-color: #fff;
-    border-bottom: 1px solid #fff;
+.selector__button:active {
+    background-color: rgba(127, 127, 127, 0.9);
+}
+
+
+.no--visible {
+    display: none;
+}
+
+.visible {
+    display: flex;
 }

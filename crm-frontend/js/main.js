@@ -1,4 +1,11 @@
 import Client from './client.js';
+const element = document.getElementById('form__contact_selector')
+const choices = new Choices(element, {
+    searchEnabled: false,
+    searchChoices: false,
+    itemSelectText: '',
+    allowHTML: false
+})
 
 // global variables
 const SERVER_URI = 'http://localhost:3000/api/clients',
@@ -11,29 +18,75 @@ const SERVER_URI = 'http://localhost:3000/api/clients',
     addClientBtnCancel = document.getElementById('form-cancel'),
     deleteClientBtnCancel = document.getElementById('delete__client-cancel'),
     addClientForm = document.getElementById('add__client-form'),
-    addClientAddContact = document.getElementById('add__client-add-contact'),
     addClientSubmitBtn = document.getElementById('add__client-submit-btn'),
-    addFormBox = document.getElementById('add__client-box'),
     addInputSurname = document.getElementById('add__client-surname'),
     addInputName = document.getElementById('add__client-name'),
     addInputLastname = document.getElementById('add__client-lastname'),
+    addContactBtn = document.getElementById('add__client_add_contact_btn'),
     inputSurname = document.getElementById('box-surname'),
     inputName = document.getElementById('box-name'),
     inputLastname = document.getElementById('box-lastname'),
-    deleteClientBtnDelete = document.getElementById('delete__client-delete-btn'),
-    deleteClientBox = document.getElementById('delete__client-box')
-// deleteTableBtn = document.getElementById('delete__client-popup'),
-// changeTableBtn = document.getElementById('delete__client-popup')
+    deleteClientBtnDelete = document.getElementById('delete__client-delete-btn')
 
 let checkServerData = await getServerData(),
     currentServerObjID = null
 
-
-
 let arrClient = [],
     arrClientCopy = [...arrClient]
 
-
+let contactID = 1
+const contactsData = [
+    {
+        inputPlaceholder: "Tel.",
+        inputType: "tel",
+        inputName: "tel",
+        inputClass: "form__contact-input",
+        inputID: `form__contact-input${contactID}`,
+        buttonType: "button",
+        buttonClass: "contact-box-btn",
+        buttonID: `contact-box-btn${contactID}`,
+    },
+    {
+        inputPlaceholder: "add..Tel.",
+        inputType: "tel",
+        inputName: "tel2",
+        inputClass: "form__contact-input",
+        inputID: `form__contact-input${contactID}`,
+        buttonType: "button",
+        buttonClass: "contact-box-btn",
+        buttonID: `contact-box-btn${contactID}`,
+    },
+    {
+        inputPlaceholder: "Email",
+        inputType: "email",
+        inputName: "email",
+        inputClass: "form__contact-input",
+        inputID: `form__contact-input${contactID}`,
+        buttonType: "button",
+        buttonClass: "contact-box-btn",
+        buttonID: `contact-box-btn${contactID}`,
+    },
+    {
+        inputPlaceholder: "vk..",
+        inputType: "text",
+        inputName: "vk",
+        inputClass: "form__contact-input",
+        inputID: `form__contact-input${contactID}`,
+        buttonType: "button",
+        buttonClass: "contact-box-btn",
+        buttonID: `contact-box-btn${contactID}`,
+    },
+    {
+        inputPlaceholder: "facebook",
+        inputType: "text",
+        inputName: "facebook",
+        inputClass: "form__contact-input",
+        inputID: `form__contact-input${contactID}`,
+        buttonType: "button",
+        buttonClass: "contact-box-btn",
+        buttonID: `contact-box-btn${contactID}`,
+    },
+]
 // func's for work with server
 async function getServerData() {
     const response = await fetch(SERVER_URI, {
@@ -90,7 +143,7 @@ async function addServerData(instanceClient) {
 
     return data
 }
-function $createClienHTML(instanceClient) {
+function $createClientHTML(instanceClient) {
 
     const $item = document.createElement('li')
     const $clientID = document.createElement('span')
@@ -160,6 +213,125 @@ function $createClienHTML(instanceClient) {
     return $item
 }
 
+
+
+function $createSelectorDOM() {
+    const $contactSelector = document.createElement('select'),
+        $contactOption1 = document.createElement('option'),
+        $contactOption2 = document.createElement('option'),
+        $contactOption3 = document.createElement('option'),
+        $contactOption4 = document.createElement('option'),
+        $contactOption5 = document.createElement('option')
+
+    $contactSelector.id = "form__contact_selector"
+    $contactSelector.classList.add("form__contact_selector")
+    $contactSelector.name = "select"
+
+    $contactOption1.textContent = "phone"
+    $contactOption2.textContent = "phone"
+    $contactOption3.textContent = "Email"
+    $contactOption4.textContent = "Vk"
+    $contactOption5.textContent = "Facebook"
+
+    $contactOption1.value = "phone"
+    $contactOption2.value = "phone"
+    $contactOption3.value = "Email"
+    $contactOption4.value = "Vk"
+    $contactOption5.value = "Facebook"
+
+    $contactSelector.append($contactOption1)
+    $contactSelector.append($contactOption2)
+    $contactSelector.append($contactOption3)
+    $contactSelector.append($contactOption4)
+    $contactSelector.append($contactOption5)
+
+    return $contactSelector
+}
+
+function $formContactDOM() {
+    const selector = $createSelectorDOM()
+
+    const $formContact = document.createElement('div')
+    $formContact.classList.add('form__contact')
+    $formContact.id = 'form__contact'
+
+    $formContact.append(selector)
+    //     $formContact.append($createAddContactInputBox())
+
+    return $formContact
+}
+
+
+const addContact = $formContactDOM()
+addContactBtn.addEventListener('click', () => {
+
+    addClientForm.insertBefore(addContact, addContactBtn)//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+})
+// function $createAddContactInputBox() {
+//     const $contactInputBox = document.createElement('div')
+//     $contactInputBox.classList.add('form__contact-input-box')
+
+//     $contactInputBox.append($createAddContactBox('Tel.', 'one'))
+//     $contactInputBox.append($createAddContactBox('add..Tel.', 'two'))
+//     $contactInputBox.append($createAddContactBox('Email', 'three'))
+//     $contactInputBox.append($createAddContactBox('vk..', 'fore'))
+//     $contactInputBox.append($createAddContactBox('facebook', 'five'))
+
+//     return $contactInputBox
+// }
+// function $createAddContactBox(placeholder, dataName) {
+//     const $contactBox = document.createElement('div'),
+//         $contactInput = document.createElement('input')
+
+//     $contactBox.classList.add('contact-box', 'visible')
+//     $contactBox.dataset.target = dataName
+
+//     $contactInput.placeholder = placeholder
+//     $contactInput.type = 'tel'
+//     $contactInput.id = 'form__contact-tel'
+
+//     $contactBox.append($contactInput)
+//     $contactBox.append($createAddContactDeleteBtn())
+
+//     return $contactBox
+// }
+// function $createAddContactDeleteBtn() {
+//     const $delBtn = document.createElement('button')
+
+//     $delBtn.classList.add('contact-box-btn')
+//     $delBtn.type = 'button'
+
+//     $delBtn.append(`
+//     <svg width="12" height="12" viewBox="0 0 12 12" fill="none"
+//     xmlns="http://www.w3.org/2000/svg">
+//     <path
+//         d="M6 0C2.682 0 0 2.682 0 6C0 9.318 2.682 12 6 12C9.318 12 12 9.318 12 6C12 2.682 9.318 0 6 0ZM6 10.8C3.354 10.8 1.2 8.646 1.2 6C1.2 3.354 3.354 1.2 6 1.2C8.646 1.2 10.8 3.354 10.8 6C10.8 8.646 8.646 10.8 6 10.8ZM8.154 3L6 5.154L3.846 3L3 3.846L5.154 6L3 8.154L3.846 9L6 6.846L8.154 9L9 8.154L6.846 6L9 3.846L8.154 3Z"
+//         fill="#B0B0B0" />
+// </svg>
+//     `)
+
+//     $delBtn.addEventListener('click', () => {
+//         console.log($delBtn.parentElement.parentElement.parentElement);
+//         $delBtn.parentElement.parentElement.parentElement.remove()
+//     })
+
+//     return $delBtn
+// }
+
+// function $createAddContactDropdownselectorItem(text, dataName) {
+//     const $contactDropdownselectorItem = document.createElement('li'),
+//         $contactDropdownselectorBtn = document.createElement('button')
+
+//     $contactDropdownselectorItem.classList.add('dropdown-selector__item')
+//     $contactDropdownselectorBtn.classList.add('form__contact-tab', 'dropdown-selector__btn')
+
+//     $contactDropdownselectorBtn.dataset.path = dataName
+//     $contactDropdownselectorBtn.textContent = text
+
+//     $contactDropdownselectorItem.append($contactDropdownselectorBtn)
+
+//     return $contactDropdownselectorItem
+// }
 function renderTable(arrClientCopy) {
 
     const lines = $table.querySelectorAll('.table_item')
@@ -173,7 +345,7 @@ function renderTable(arrClientCopy) {
     // }
     arrClientCopy.forEach(instanceClient => {
 
-        const $listItem = $createClienHTML(instanceClient)
+        const $listItem = $createClientHTML(instanceClient)
         $table.append($listItem)
     });
 }
@@ -324,45 +496,4 @@ btnDeleteClientClose.addEventListener('click', () => {
 deleteClientBtnCancel.addEventListener('click', () => {
     popUpDeleteClient.classList.remove('open-popup')
 })
-
-// contacts
-
-const element = document.querySelector('.js-choice');
-const choices = new Choices(element, {
-    silent: false,
-    items: [],
-    choices: [],
-    renderChoiceLimit: -1,
-    maxItemCount: -1,
-    addItems: true,
-    addItemFilter: null,
-    removeItems: true,
-    removeItemButton: false,
-    editItems: false,
-    allowHTML: true,
-    duplicateItemsAllowed: true,
-    delimiter: ',',
-    paste: true,
-    searchEnabled: false,
-    searchChoices: false,
-    searchFloor: 1,
-    searchResultLimit: 4,
-    searchFields: ['label', 'value'],
-    position: 'auto',
-    resetScrollPosition: true,
-    shouldSort: true,
-    shouldSortItems: false,
-    placeholder: true,
-    placeholderValue: null,
-    searchPlaceholderValue: null,
-    prependValue: null,
-    appendValue: null,
-    renderSelectedChoices: 'auto',
-    loadingText: 'Loading...',
-    noResultsText: 'No results found',
-    noChoicesText: 'No choices to choose from',
-    itemSelectText: '',
-    uniqueItemText: 'Only unique values can be added',
-    customAddItemText: 'Only values matching specific conditions can be added',
-});
 
