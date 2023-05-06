@@ -585,21 +585,24 @@ ul {
 
 /* form contact */
 .form__contact__wrapper {
-    display: flex;
-    width: 100%;
-    margin-bottom: 15px;
+    width: 450px;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--color-lighter);
+    padding: 25px 30px 10px 30px;
 }
 
 .form__contact {
-    width: 450px;
-    max-width: 450px;
-    height: 87px;
-    padding: 25px 30px;
+    width: 390px;
+    max-width: 390px;
+    height: 38px;
     display: flex;
     justify-content: center;
     min-height: 35px;
-    background-color: var(--color-lighter);
     border: none;
+    margin-bottom: 15px;
 }
 
 .form__contact_selector {
@@ -619,6 +622,8 @@ ul {
     background-color: var(--color-light);
     color: var(--color-dark);
     height: 38px;
+    border-bottom: 1px solid var(--color-grey-light);
+    border-radius: 0;
 }
 
 .choices__inner {

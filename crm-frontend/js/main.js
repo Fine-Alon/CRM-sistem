@@ -1,11 +1,4 @@
 import Client from './client.js';
-const element = document.getElementById('form__contact_selector')
-const choices = new Choices(element, {
-    searchEnabled: false,
-    searchChoices: false,
-    itemSelectText: '',
-    allowHTML: false
-})
 
 // global variables
 const SERVER_URI = 'http://localhost:3000/api/clients',
@@ -18,6 +11,7 @@ const SERVER_URI = 'http://localhost:3000/api/clients',
     addClientBtnCancel = document.getElementById('form-cancel'),
     deleteClientBtnCancel = document.getElementById('delete__client-cancel'),
     addClientForm = document.getElementById('add__client-form'),
+    addContactWrapper = document.getElementById('form__contact__wrapper'),
     addClientSubmitBtn = document.getElementById('add__client-submit-btn'),
     addInputSurname = document.getElementById('add__client-surname'),
     addInputName = document.getElementById('add__client-name'),
@@ -34,59 +28,49 @@ let checkServerData = await getServerData(),
 let arrClient = [],
     arrClientCopy = [...arrClient]
 
-let contactID = 1
 const contactsData = [
     {
         inputPlaceholder: "Tel.",
         inputType: "tel",
         inputName: "tel",
         inputClass: "form__contact-input",
-        inputID: `form__contact-input${contactID}`,
+        inputID: "form__contact-input",
         buttonType: "button",
         buttonClass: "contact-box-btn",
-        buttonID: `contact-box-btn${contactID}`,
-    },
-    {
-        inputPlaceholder: "add..Tel.",
-        inputType: "tel",
-        inputName: "tel2",
-        inputClass: "form__contact-input",
-        inputID: `form__contact-input${contactID}`,
-        buttonType: "button",
-        buttonClass: "contact-box-btn",
-        buttonID: `contact-box-btn${contactID}`,
+        buttonID: "contact-box-btn",
     },
     {
         inputPlaceholder: "Email",
         inputType: "email",
         inputName: "email",
         inputClass: "form__contact-input",
-        inputID: `form__contact-input${contactID}`,
+        inputID: "form__contact-input",
         buttonType: "button",
         buttonClass: "contact-box-btn",
-        buttonID: `contact-box-btn${contactID}`,
+        buttonID: "contact-box-btn",
     },
     {
         inputPlaceholder: "vk..",
         inputType: "text",
         inputName: "vk",
         inputClass: "form__contact-input",
-        inputID: `form__contact-input${contactID}`,
+        inputID: "form__contact-input",
         buttonType: "button",
         buttonClass: "contact-box-btn",
-        buttonID: `contact-box-btn${contactID}`,
+        buttonID: "contact-box-btn",
     },
     {
         inputPlaceholder: "facebook",
         inputType: "text",
         inputName: "facebook",
         inputClass: "form__contact-input",
-        inputID: `form__contact-input${contactID}`,
+        inputID: "form__contact-input",
         buttonType: "button",
         buttonClass: "contact-box-btn",
-        buttonID: `contact-box-btn${contactID}`,
+        buttonID: "contact-box-btn",
     },
 ]
+
 // func's for work with server
 async function getServerData() {
     const response = await fetch(SERVER_URI, {
@@ -142,6 +126,17 @@ async function addServerData(instanceClient) {
     currentServerObjID = data.id
 
     return data
+}
+const allSelectorsMadeChoices = () => {
+    const selectors = document.querySelectorAll('.form__contact_selector')
+    selectors.forEach(selector => {
+        const choices = new Choices(selector, {
+            searchEnabled: false,
+            searchChoices: false,
+            itemSelectText: '',
+            allowHTML: false
+        })
+    })
 }
 function $createClientHTML(instanceClient) {
 
@@ -212,10 +207,54 @@ function $createClientHTML(instanceClient) {
 
     return $item
 }
+function $contactInputDOM(inputName) {
+    const $input = document.createElement('input'),
+        $btn = document.createElement('button')
+    let typeOfInput = 0
 
+    switch (inputName) {
+        case "tel": typeOfInput = 0
+            break;
+        case "Email": typeOfInput = 1
+            break;
+        case "Vk": typeOfInput = 2
+            break;
+        case "Facebook": typeOfInput = 3
+            break;
+        default: typeOfInput = 0
+            break;
+    }
 
+    $input.placeholder = contactsData[typeOfInput].inputPlaceholder
+    $input.type = contactsData[typeOfInput].inputType
+    $input.name = contactsData[typeOfInput].inputName
+    $input.classList.add(contactsData[typeOfInput].inputClass)
+    $input.id = `${contactsData[typeOfInput].inputID}${contactID}`
 
-function $createSelectorDOM() {
+    $btn.type = contactsData[typeOfInput].buttonType
+    $btn.classList.add(contactsData[typeOfInput].buttonClass)
+    $btn.id = `${contactsData[typeOfInput].buttonID}${contactID}`
+
+    $btn.addEventListener('click', () => {
+        $btn.parentNode.remove()
+        contactID--
+        if (contactID < 5) { addContactBtn.style.display = 'block' }
+        // check if exist any contact field so add display = 'flex' to its wrapper
+        const countOfContaktFields = document.querySelectorAll('.form__contact')
+        if (countOfContaktFields.length > 0) {
+            console.log(countOfContaktFields.length);
+            addContactWrapper.style.display = 'flex'
+        } else {
+            addContactWrapper.style.display = 'none'
+        }
+    })
+
+    return {
+        $input,
+        $btn
+    }
+}
+function $contactSelectorDOM() {
     const $contactSelector = document.createElement('select'),
         $contactOption1 = document.createElement('option'),
         $contactOption2 = document.createElement('option'),
@@ -223,7 +262,7 @@ function $createSelectorDOM() {
         $contactOption4 = document.createElement('option'),
         $contactOption5 = document.createElement('option')
 
-    $contactSelector.id = "form__contact_selector"
+    $contactSelector.id = `form__contact_selector${contactID}`
     $contactSelector.classList.add("form__contact_selector")
     $contactSelector.name = "select"
 
@@ -247,26 +286,45 @@ function $createSelectorDOM() {
 
     return $contactSelector
 }
-
 function $formContactDOM() {
-    const selector = $createSelectorDOM()
+    const $selector = $contactSelectorDOM()
+    const $inputField = $contactInputDOM("vk")
 
     const $formContact = document.createElement('div')
     $formContact.classList.add('form__contact')
     $formContact.id = 'form__contact'
 
-    $formContact.append(selector)
+    $formContact.append($selector)
+    $formContact.append($inputField.$input)
+    $formContact.append($inputField.$btn)
     //     $formContact.append($createAddContactInputBox())
 
     return $formContact
 }
 
+let contactID = 1;
 
-const addContact = $formContactDOM()
 addContactBtn.addEventListener('click', () => {
 
-    addClientForm.insertBefore(addContact, addContactBtn)//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    const addContact = $formContactDOM()
+    // addClientForm.insertBefore(addContact, addContactBtn)//!!
+    // add contact field 
+    addContactWrapper.append(addContact)
+    contactID += 1
+    if (contactID > 3) { addContactBtn.style.display = 'none' }
+
+    // check if exist any contact field so add display = 'flex' to its wrapper
+    const countOfContaktFields = document.querySelectorAll('.form__contact')
+    if (countOfContaktFields.length > 0) {
+        console.log(countOfContaktFields.length);
+        addContactWrapper.style.display = 'flex'
+    } else {
+        addContactWrapper.style.display = 'none'
+    }
+
+    allSelectorsMadeChoices()
 })
+
 // function $createAddContactInputBox() {
 //     const $contactInputBox = document.createElement('div')
 //     $contactInputBox.classList.add('form__contact-input-box')
