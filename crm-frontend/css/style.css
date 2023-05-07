@@ -241,6 +241,17 @@ ul {
     line-height: 19px;
     letter-spacing: 2px;
     cursor: pointer;
+    outline: none;
+}
+
+.btn_add-client:focus {
+    border: 1px solid var(--color-focus-red);
+}
+
+.btn_add-client:hover,
+.btn_add-client:active {
+    background-color: #9873ff30;
+    outline: none;
 }
 
 .grey_12 {
@@ -400,10 +411,15 @@ ul {
     border: none;
     cursor: pointer;
     transition: background-color .2s ease;
+    outline: none;
 }
 
 .add__client_add_contact_btn svg {
     margin-bottom: -2px;
+}
+
+.add__client_add_contact_btn:focus {
+    background-color: var(--color-grey-light);
 }
 
 .add__client_add_contact_btn:hover {
@@ -421,6 +437,11 @@ ul {
     border-radius: 2px;
     margin-bottom: 8px;
     transition: box-shadow .1s ease;
+}
+
+.form-submit-btn:focus {
+    outline-offset: 2px;
+    outline: 1px solid var(--color-focus-red);
 }
 
 .form-submit-btn:hover {
@@ -474,6 +495,11 @@ ul {
     color: var(--color-dark);
     line-height: 14px;
     transition: color .2s ease;
+}
+
+.form-cancel:focus {
+    outline-offset: 2px;
+    outline: 2px solid var(--color-focus-red);
 }
 
 .form-cancel:hover {
@@ -626,8 +652,13 @@ ul {
     border-radius: 0;
 }
 
+.choices:focus {
+    border: 1px solid var(--color-dark);
+}
+
 .choices__inner {
     border: 1px solid var(--color-grey-light);
+    border-radius: 0;
     width: 100%;
     outline: none;
     background-color: var(--color-light);
@@ -669,8 +700,17 @@ ul {
     outline: none;
     border: 1px solid var(--color-grey-light);
     background-color: var(--color-light);
+    transition: background-color .3s ease;
 }
 
+.contact-box-btn:focus {
+    border: 1px solid var(--color-focus-red);
+}
+
+.contact-box-btn:hover,
+.contact-box-btn:active {
+    background-color: #9a75ff47;
+}
 
 .selector__button {
     position: relative;

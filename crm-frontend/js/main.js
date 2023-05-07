@@ -11,7 +11,7 @@ const SERVER_URI = 'http://localhost:3000/api/clients',
     addClientBtnCancel = document.getElementById('form-cancel'),
     deleteClientBtnCancel = document.getElementById('delete__client-cancel'),
     addClientForm = document.getElementById('add__client-form'),
-    addContactWrapper = document.getElementById('form__contact__wrapper'),
+    formContactWrapper = document.getElementById('form__contact__wrapper'),
     addClientSubmitBtn = document.getElementById('add__client-submit-btn'),
     addInputSurname = document.getElementById('add__client-surname'),
     addInputName = document.getElementById('add__client-name'),
@@ -25,12 +25,14 @@ const SERVER_URI = 'http://localhost:3000/api/clients',
 let checkServerData = await getServerData(),
     currentServerObjID = null
 
+let clientContactsForServer = []
+
 let arrClient = [],
     arrClientCopy = [...arrClient]
 
 const contactsData = [
     {
-        inputPlaceholder: "Tel.",
+        inputPlaceholder: "+972-xx-xxx-xx-xx",
         inputType: "tel",
         inputName: "tel",
         inputClass: "form__contact-input",
@@ -40,7 +42,7 @@ const contactsData = [
         buttonID: "contact-box-btn",
     },
     {
-        inputPlaceholder: "Email",
+        inputPlaceholder: "xxxxx@xxx.xxx",
         inputType: "email",
         inputName: "email",
         inputClass: "form__contact-input",
@@ -50,7 +52,7 @@ const contactsData = [
         buttonID: "contact-box-btn",
     },
     {
-        inputPlaceholder: "vk..",
+        inputPlaceholder: "https://vk.com/xxxxx",
         inputType: "text",
         inputName: "vk",
         inputClass: "form__contact-input",
@@ -60,7 +62,7 @@ const contactsData = [
         buttonID: "contact-box-btn",
     },
     {
-        inputPlaceholder: "facebook",
+        inputPlaceholder: "https://www.facebook.com/xxxxx",
         inputType: "text",
         inputName: "facebook",
         inputClass: "form__contact-input",
@@ -70,6 +72,7 @@ const contactsData = [
         buttonID: "contact-box-btn",
     },
 ]
+let contactID = 1
 
 // func's for work with server
 async function getServerData() {
@@ -116,7 +119,7 @@ async function addServerData(instanceClient) {
             name: instanceClient._name,
             surname: instanceClient._surname,
             lastName: instanceClient._lastname,
-            contacts: []
+            contacts: instanceClient._contacts
         })
     })
 
@@ -236,16 +239,16 @@ function $contactInputDOM(inputName) {
     $btn.id = `${contactsData[typeOfInput].buttonID}${contactID}`
 
     $btn.addEventListener('click', () => {
+
         $btn.parentNode.remove()
         contactID--
         if (contactID < 5) { addContactBtn.style.display = 'block' }
         // check if exist any contact field so add display = 'flex' to its wrapper
         const countOfContaktFields = document.querySelectorAll('.form__contact')
         if (countOfContaktFields.length > 0) {
-            console.log(countOfContaktFields.length);
-            addContactWrapper.style.display = 'flex'
+            formContactWrapper.style.display = 'flex'
         } else {
-            addContactWrapper.style.display = 'none'
+            formContactWrapper.style.display = 'none'
         }
     })
 
@@ -267,7 +270,7 @@ function $contactSelectorDOM() {
     $contactSelector.name = "select"
 
     $contactOption1.textContent = "phone"
-    $contactOption2.textContent = "phone"
+    $contactOption2.textContent = "add.phone"
     $contactOption3.textContent = "Email"
     $contactOption4.textContent = "Vk"
     $contactOption5.textContent = "Facebook"
@@ -277,6 +280,10 @@ function $contactSelectorDOM() {
     $contactOption3.value = "Email"
     $contactOption4.value = "Vk"
     $contactOption5.value = "Facebook"
+
+
+    // let currentValueOfSelector = document.getElementById(`form__contact_selector1${contactID}`)//!!!!!!!!!!!!!!!!!!
+    // console.log(currentValueOfSelector.value);
 
     $contactSelector.append($contactOption1)
     $contactSelector.append($contactOption2)
@@ -294,6 +301,15 @@ function $formContactDOM() {
     $formContact.classList.add('form__contact')
     $formContact.id = 'form__contact'
 
+
+    $selector.addEventListener('change', () => {
+        const apropriateInput = $contactInputDOM($selector.value)
+        $formContact.removeChild($formContact.lastChild)
+        $formContact.removeChild($formContact.lastChild)
+        $formContact.append(apropriateInput.$input)
+        $formContact.append(apropriateInput.$btn)
+    })
+
     $formContact.append($selector)
     $formContact.append($inputField.$input)
     $formContact.append($inputField.$btn)
@@ -302,94 +318,28 @@ function $formContactDOM() {
     return $formContact
 }
 
-let contactID = 1;
-
+// add contact BTN usability
 addContactBtn.addEventListener('click', () => {
+
 
     const addContact = $formContactDOM()
     // addClientForm.insertBefore(addContact, addContactBtn)//!!
     // add contact field 
-    addContactWrapper.append(addContact)
+    formContactWrapper.append(addContact)
     contactID += 1
     if (contactID > 3) { addContactBtn.style.display = 'none' }
 
     // check if exist any contact field so add display = 'flex' to its wrapper
     const countOfContaktFields = document.querySelectorAll('.form__contact')
     if (countOfContaktFields.length > 0) {
-        console.log(countOfContaktFields.length);
-        addContactWrapper.style.display = 'flex'
+        formContactWrapper.style.display = 'flex'
     } else {
-        addContactWrapper.style.display = 'none'
+        formContactWrapper.style.display = 'none'
     }
 
     allSelectorsMadeChoices()
 })
 
-// function $createAddContactInputBox() {
-//     const $contactInputBox = document.createElement('div')
-//     $contactInputBox.classList.add('form__contact-input-box')
-
-//     $contactInputBox.append($createAddContactBox('Tel.', 'one'))
-//     $contactInputBox.append($createAddContactBox('add..Tel.', 'two'))
-//     $contactInputBox.append($createAddContactBox('Email', 'three'))
-//     $contactInputBox.append($createAddContactBox('vk..', 'fore'))
-//     $contactInputBox.append($createAddContactBox('facebook', 'five'))
-
-//     return $contactInputBox
-// }
-// function $createAddContactBox(placeholder, dataName) {
-//     const $contactBox = document.createElement('div'),
-//         $contactInput = document.createElement('input')
-
-//     $contactBox.classList.add('contact-box', 'visible')
-//     $contactBox.dataset.target = dataName
-
-//     $contactInput.placeholder = placeholder
-//     $contactInput.type = 'tel'
-//     $contactInput.id = 'form__contact-tel'
-
-//     $contactBox.append($contactInput)
-//     $contactBox.append($createAddContactDeleteBtn())
-
-//     return $contactBox
-// }
-// function $createAddContactDeleteBtn() {
-//     const $delBtn = document.createElement('button')
-
-//     $delBtn.classList.add('contact-box-btn')
-//     $delBtn.type = 'button'
-
-//     $delBtn.append(`
-//     <svg width="12" height="12" viewBox="0 0 12 12" fill="none"
-//     xmlns="http://www.w3.org/2000/svg">
-//     <path
-//         d="M6 0C2.682 0 0 2.682 0 6C0 9.318 2.682 12 6 12C9.318 12 12 9.318 12 6C12 2.682 9.318 0 6 0ZM6 10.8C3.354 10.8 1.2 8.646 1.2 6C1.2 3.354 3.354 1.2 6 1.2C8.646 1.2 10.8 3.354 10.8 6C10.8 8.646 8.646 10.8 6 10.8ZM8.154 3L6 5.154L3.846 3L3 3.846L5.154 6L3 8.154L3.846 9L6 6.846L8.154 9L9 8.154L6.846 6L9 3.846L8.154 3Z"
-//         fill="#B0B0B0" />
-// </svg>
-//     `)
-
-//     $delBtn.addEventListener('click', () => {
-//         console.log($delBtn.parentElement.parentElement.parentElement);
-//         $delBtn.parentElement.parentElement.parentElement.remove()
-//     })
-
-//     return $delBtn
-// }
-
-// function $createAddContactDropdownselectorItem(text, dataName) {
-//     const $contactDropdownselectorItem = document.createElement('li'),
-//         $contactDropdownselectorBtn = document.createElement('button')
-
-//     $contactDropdownselectorItem.classList.add('dropdown-selector__item')
-//     $contactDropdownselectorBtn.classList.add('form__contact-tab', 'dropdown-selector__btn')
-
-//     $contactDropdownselectorBtn.dataset.path = dataName
-//     $contactDropdownselectorBtn.textContent = text
-
-//     $contactDropdownselectorItem.append($contactDropdownselectorBtn)
-
-//     return $contactDropdownselectorItem
-// }
 function renderTable(arrClientCopy) {
 
     const lines = $table.querySelectorAll('.table_item')
@@ -408,7 +358,7 @@ function renderTable(arrClientCopy) {
     });
 }
 
-// here we put to 'Copy Main Array' data from server
+// here we put  data from server to 'Copy Main Array'
 if (checkServerData) {
     for (const serverObj of checkServerData) {
 
@@ -423,17 +373,33 @@ if (checkServerData) {
         ))
     }
 }
+console.log(arrClientCopy);
 renderTable(arrClientCopy)
 
 // Adding new client to server then it will be taken as Instance to Array Copy 
 addClientForm.addEventListener('submit', async (event) => {
     event.preventDefault()
 
+    // get TYPE & VALUE of contacts
+    let contacts = document.querySelectorAll('.form__contact')
+    for (const contact of contacts) {
+
+        const temptObj = {
+            type: contact.childNodes[1].name,
+            value: contact.childNodes[1].value
+        }
+
+        clientContactsForServer.push(temptObj)
+    }
+
     let newClient = new Client(
         addInputName.value.trim(),
         addInputSurname.value.trim(),
-        addInputLastname.value.trim()
+        addInputLastname.value.trim(),
+        clientContactsForServer
     )
+
+    console.log(newClient);
 
     // FOR ADD NEW STUDENT TO SERVER...
     await addServerData(newClient);
