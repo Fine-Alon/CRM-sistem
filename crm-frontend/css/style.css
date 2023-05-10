@@ -58,6 +58,7 @@ ul {
 }
 
 .container {
+    min-width: 768px;
     max-width: 1024px;
     padding: 30px 0;
     margin: 0 auto;
@@ -212,6 +213,44 @@ ul {
     width: 14%;
 }
 
+.tippy-tooltip.castom-theme {
+    border-radius: 0;
+    font-weight: 700;
+    font-size: 12px;
+    color: #FFFFFF;
+    padding: 3px 10px;
+}
+
+.tippy-tooltip.castom-theme .tippy-arrow {
+    transform: scaleX(0.5);
+    border-width: 8px 8px 0;
+}
+
+.wrapper.table-contacts {
+    justify-content: flex-start;
+
+}
+
+.contacts_svg {
+    margin-right: 7px;
+}
+
+.contacts_svg path {
+    transition: fill .3s ease;
+}
+
+.contacts_svg:hover path {
+    fill: rgb(81, 9, 96);
+}
+
+.svgPhone:hover circle {
+    fill: rgb(81, 9, 96);
+}
+
+.svgPhone:hover path {
+    fill: var(--color-white);
+}
+
 .table-options {
     width: 22%;
     height: 100%;
@@ -283,6 +322,7 @@ ul {
 
 /*    forms    */
 
+/* add client */
 .add__client-popup {
     background-color: #00000080;
     width: 100%;
@@ -370,6 +410,13 @@ ul {
     width: 100%;
     margin-bottom: 5px;
 }
+.change__client-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 5px;
+}
 
 .form-input-box {
     position: relative;
@@ -426,6 +473,71 @@ ul {
     background-color: var(--color-light);
 }
 
+.change__client_add_contact_btn {
+    min-height: 35px;
+    width: 450px;
+    max-width: 450px;
+    margin-bottom: 25px;
+    background-color: var(--color-lighter);
+    border: none;
+    cursor: pointer;
+    transition: background-color .2s ease;
+    outline: none;
+}
+
+.change__client_add_contact_btn svg {
+    margin-bottom: -2px;
+}
+
+.change__client_add_contact_btn:focus {
+    background-color: var(--color-grey-light);
+}
+
+.change__client_add_contact_btn:hover {
+    background-color: var(--color-light);
+}
+
+/* change client */
+
+.change__client-popup {
+    background-color: #00000080;
+    width: 100%;
+    height: 100vh;
+    z-index: 3;
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    transform: scale(0);
+    transition: opacity .6s ease;
+}
+
+.change__client-box {
+    background-color: var(--color-white);
+    width: 450px;
+    max-width: 450px;
+    min-height: 400px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    padding: 25px 30px;
+    opacity: 0;
+    visibility: hidden;
+    transform: scale(0);
+    transition: opacity .6s ease, transform .6s ease;
+}
+
+.change__client-popup.open-popup .change__client-box {
+    opacity: 1;
+    visibility: visible;
+    transform: scale(1);
+}
+/* ------------------- */
 .form-submit-btn {
     border: none;
     cursor: pointer;
@@ -437,6 +549,7 @@ ul {
     border-radius: 2px;
     margin-bottom: 8px;
     transition: box-shadow .1s ease;
+    margin-top: 5px;
 }
 
 .form-submit-btn:focus {
