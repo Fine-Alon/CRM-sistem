@@ -243,11 +243,11 @@ ul {
     fill: rgb(81, 9, 96);
 }
 
-.svgPhone:hover circle {
+.svgtel:hover circle {
     fill: rgb(81, 9, 96);
 }
 
-.svgPhone:hover path {
+.svgtel:hover path {
     fill: var(--color-white);
 }
 
