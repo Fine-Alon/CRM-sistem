@@ -362,6 +362,12 @@ ul {
     transform: scale(1);
 }
 
+.change__client_title_wrapper{
+    display: flex;
+    align-self: flex-start;
+    align-items: center;
+}
+
 .client-title {
     align-self: flex-start;
     display: block;
@@ -370,6 +376,14 @@ ul {
     line-height: 25px;
     color: var(--color-dark);
     margin-bottom: 30px;
+    padding-right: 10px;
+}
+
+.change__client-id {
+    font-weight: 400;
+    font-size: 12px;
+    color: var(--color-grey-light);
+    margin-bottom: 25px;
 }
 
 .btn-close {
@@ -410,6 +424,7 @@ ul {
     width: 100%;
     margin-bottom: 5px;
 }
+
 .change__client-form {
     display: flex;
     flex-direction: column;
@@ -537,6 +552,7 @@ ul {
     visibility: visible;
     transform: scale(1);
 }
+
 /* ------------------- */
 .form-submit-btn {
     border: none;

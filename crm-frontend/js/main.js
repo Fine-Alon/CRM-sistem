@@ -11,7 +11,7 @@ const SERVER_URI = 'http://localhost:3000/api/clients',
     btnChangeClientClose = document.getElementById('btn-close-change'),
     btnDeleteClientClose = document.getElementById('btn-close-delete'),
     addClientBtnCancel = document.getElementById('form-cancel'),
-    changeClientBtnCancel = document.getElementById('change-form-cancel'),
+    changeFormDeleteClient = document.getElementById('change__form_delete_client'),
     deleteClientBtnCancel = document.getElementById('delete__client-cancel'),
     addClientForm = document.getElementById('add__client-form'),
     changeClientForm = document.getElementById('change__client-form'),
@@ -27,11 +27,11 @@ const SERVER_URI = 'http://localhost:3000/api/clients',
     addInputLastnameChangeField = document.getElementById('change__client-lastname'),
     addContactBtn = document.getElementById('add__client_add_contact_btn'),
     addContactBtnChangeField = document.getElementById('change__client_add_contact_btn'),
-    inputSurname = document.getElementById('box-surname'),
+    inputSurnameAddField = document.getElementById('box-surname'),
     inputSurnameChangeField = document.getElementById('change-box-surname'),
-    inputName = document.getElementById('box-name'),
+    inputNameAddField = document.getElementById('box-name'),
     inputNameChangeField = document.getElementById('change-box-name'),
-    inputLastname = document.getElementById('box-lastname'),
+    inputLastnameAddField = document.getElementById('box-lastname'),
     inputLastnameChangeField = document.getElementById('change-box-lastname'),
     deleteClientBtnDelete = document.getElementById('delete__client-delete-btn'),
     svgvk = `<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -59,8 +59,6 @@ const SERVER_URI = 'http://localhost:3000/api/clients',
 
 let checkServerData = await getServerData(),
     currentServerObjID = null
-
-let clientContactsForServer = []
 
 let arrClient = [],
     arrClientCopy = [...arrClient]
@@ -171,9 +169,25 @@ async function addServerData(instanceClient) {
     })
 
     const data = await response.json()
-    // past this ID for next step... submit. Threr we need id for 
+    // past this ID for next step... submit. There we need id for 
     // retern 'Server Obj' to instance Client & put it to array
     currentServerObjID = data.id
+
+    return data
+}
+async function changeServerData(id, instanceClient) {
+
+    const response = await fetch(`${SERVER_URI}/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'aplication.json' },
+        body: JSON.stringify({
+            name: instanceClient._name,
+            surname: instanceClient._surname,
+            lastName: instanceClient._lastname,
+            contacts: instanceClient._contacts
+        })
+    })
+    const data = await response.json()
 
     return data
 }
@@ -264,9 +278,9 @@ function $createClientHTML(instanceClient) {
 
     $clientOptionsChange.addEventListener('click', async () => {
         const dataToBeChange = await getServerDataByID(instanceClient._id)
-        console.log(dataToBeChange);
 
         popUpChangeClient.classList.add('open-popup')
+        document.querySelector('.change__client-id').textContent = `ID: ${instanceClient._id}`
         addInputNameChangeField.value = dataToBeChange.name
         addInputSurnameChangeField.value = dataToBeChange.surname
         addInputLastnameChangeField.value = dataToBeChange.lastName
@@ -283,15 +297,21 @@ function $createClientHTML(instanceClient) {
                 const contactValue = dataToBeChange.contacts[contactObj].value
 
                 addContactOnClick(addContactBtnChangeField, formContactWrapperChangeField, changeClientContactID, contactType, contactValue)
-
-                const formContactsList = document.querySelectorAll('#form__contact')
-
-                for (const form of formContactsList) {
-                    console.log(form);//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                }
-
             }
         }
+        // change client BTN-delete
+        changeFormDeleteClient.addEventListener('click', () => {
+            $clientOptionsDelete.click()
+            resetContactField(popUpChangeClient, inputNameChangeField, inputSurnameChangeField, inputLastnameChangeField, formContactWrapperChangeField)
+        })
+
+        // Changing client on server & resolt will be taken as Instance to Array Copy 
+        changeClientForm.addEventListener('submit', (event) => {
+            event.preventDefault()
+            submitClientData('change', addInputNameChangeField, addInputSurnameChangeField,
+                addInputLastnameChangeField, changeClientSubmitBtn, popUpChangeClient, formContactWrapperChangeField,
+                inputNameChangeField, inputLastnameChangeField, inputSurnameChangeField, instanceClient._id)
+        })
     })
 
     $clientCreating.append($clientDateCreating)
@@ -377,10 +397,22 @@ function $contactInputDOM(inputName, text = '') {
         $btn
     }
 }
-function resetContactField() {
+function resetContactField(typeOfPopUpField, inputBoxName, inputBoxSurename, inputBoxLastname, typeFormWrapper) {
     contactID = 0
     addClientContactID = 0
     changeClientContactID = 0
+
+    inputBoxName.children[1].value = ''
+    inputBoxSurename.children[1].value = ''
+    inputBoxLastname.children[1].value = ''
+
+    inputBoxLastname.firstElementChild.classList.remove('placeholder-up')
+    inputBoxSurename.firstElementChild.classList.remove('placeholder-up')
+    inputBoxName.firstElementChild.classList.remove('placeholder-up')
+    typeOfPopUpField.classList.remove('open-popup')
+    popUpDeleteClient.classList.remove('open-popup')
+
+
 
     let countOfContaktFields = document.querySelectorAll('.form__contact')
     countOfContaktFields.forEach(form => {
@@ -390,9 +422,9 @@ function resetContactField() {
     countOfContaktFields = document.querySelectorAll('.form__contact')
 
     if (countOfContaktFields.length > 0) {
-        formContactWrapper.style.display = 'flex'
+        typeFormWrapper.style.display = 'flex'
     } else {
-        formContactWrapper.style.display = 'none'
+        typeFormWrapper.style.display = 'none'
     }
 
     const allForms = document.querySelectorAll('form')
@@ -478,6 +510,72 @@ function addContactOnClick(btnOnClick, wrapperField, clientContactID, selectorVa
 
     allSelectorsMadeChoices()
 }
+async function submitClientData(method, inputName, inputSurname,
+    inputLastname, typeOfSubmitBTN, typeOfPopUpForm, typeOfContactWrapper,
+    boxName, boxLastname, boxSurname, id) {
+
+    let clientContactsForServer = []
+
+    // get TYPE & VALUE of contacts
+    let contacts = document.querySelectorAll('.form__contact')
+    for (const contact of contacts) {
+
+        const temptObj = {
+            type: contact.childNodes[1].name,
+            value: contact.childNodes[1].value
+        }
+        clientContactsForServer.push(temptObj)
+    }
+
+    let newClient = new Client(
+        inputName.value.trim(),
+        inputSurname.value.trim(),
+        inputLastname.value.trim(),
+        clientContactsForServer
+    )
+
+    // FOR ADD NEW STUDENT TO SERVER...
+    if (method === 'add') {
+        await addServerData(newClient);
+        // get ID
+        const serverObj = await getServerDataByID(currentServerObjID)
+
+        // FOR ADD NEW STUDENT TO ARRAY[]
+        arrClientCopy.push(
+            new Client(
+                serverObj.name,
+                serverObj.surname,
+                serverObj.lastName,
+                serverObj.contacts,
+                serverObj.id,
+                serverObj.createdAt,
+                serverObj.updatedAt
+            )
+        )
+    }
+    // FOR CHANGE STUDENT ON SERVER...
+    if (method === 'change') {
+        console.log('change');
+
+        const changedData = await changeServerData(id, newClient)
+
+        console.log(changedData);
+
+    }
+
+    // animation for loading
+    typeOfSubmitBTN.classList.remove('form-submit-btn')
+    typeOfSubmitBTN.classList.add('form-submit-btn-loading')
+
+    setTimeout(() => {
+        typeOfSubmitBTN.classList.remove('form-submit-btn-loading')
+        typeOfSubmitBTN.classList.add('form-submit-btn')
+        $renderTable(arrClientCopy)
+        setTimeout(() => {
+            resetContactField(typeOfPopUpForm, boxName, boxSurname, boxLastname, typeOfContactWrapper)
+        }, 200)
+    }, 1500)
+}
 function $renderTable(arrClientCopy) {
 
     const lines = $table.querySelectorAll('.table_item')
@@ -513,65 +611,12 @@ if (checkServerData) {
 }
 $renderTable(arrClientCopy)
 
-// Adding new client to server then it will be taken as Instance to Array Copy !!!!!!!!!!!!!!
-addClientForm.addEventListener('submit', async (event) => {
+// Adding new client to server & it will be taken as Instance to Array Copy !!!!!!!!!!!!!!
+addClientForm.addEventListener('submit', (event) => {
     event.preventDefault()
-
-    // get TYPE & VALUE of contacts
-    let contacts = document.querySelectorAll('.form__contact')
-    for (const contact of contacts) {
-
-        const temptObj = {
-            type: contact.childNodes[1].name,
-            value: contact.childNodes[1].value
-        }
-
-        clientContactsForServer.push(temptObj)
-    }
-
-    let newClient = new Client(
-        addInputName.value.trim(),
-        addInputSurname.value.trim(),
-        addInputLastname.value.trim(),
-        clientContactsForServer
-    )
-
-    // FOR ADD NEW STUDENT TO SERVER...
-    await addServerData(newClient);
-    // get ID
-    const serverObj = await getServerDataByID(currentServerObjID)
-
-    // FOR ADD NEW STUDENT TO ARRAY[]
-    arrClientCopy.push(
-        new Client(
-            serverObj.name,
-            serverObj.surname,
-            serverObj.lastName,
-            serverObj.contacts,
-            serverObj.id,
-            serverObj.createdAt,
-            serverObj.updatedAt
-        )
-    )
-
-    // animation for loading
-    addClientSubmitBtn.classList.remove('form-submit-btn')
-    addClientSubmitBtn.classList.add('form-submit-btn-loading')
-    addInputName.value = ''
-    addInputSurname.value = ''
-    addInputLastname.value = ''
-    inputLastname.firstElementChild.classList.remove('placeholder-up')
-    inputSurname.firstElementChild.classList.remove('placeholder-up')
-    inputName.firstElementChild.classList.remove('placeholder-up')
-    setTimeout(() => {
-        addClientSubmitBtn.classList.remove('form-submit-btn-loading')
-        addClientSubmitBtn.classList.add('form-submit-btn')
-        $renderTable(arrClientCopy)
-        setTimeout(() => {
-            popUpAddClient.classList.remove('open-popup')
-        }, 200)
-    }, 1500)
-
+    submitClientData('add', addInputName, addInputSurname,
+        addInputLastname, addClientSubmitBtn, popUpAddClient, formContactWrapper,
+        inputNameAddField, inputLastnameAddField, inputSurnameAddField)
 })
 
 // BTN add contacts
@@ -583,29 +628,16 @@ addContactBtn.addEventListener('click', () => {
 btnAddClient.addEventListener('click', () => {
     popUpAddClient.classList.add('open-popup')
 })
-
 btnAddClientClose.addEventListener('click', () => {
-    inputLastname.firstElementChild.classList.remove('placeholder-up')
-    inputSurname.firstElementChild.classList.remove('placeholder-up')
-    inputName.firstElementChild.classList.remove('placeholder-up')
-    popUpAddClient.classList.remove('open-popup')
-    resetContactField()
+    resetContactField(popUpAddClient, inputNameAddField, inputSurnameAddField, inputLastnameAddField, formContactWrapper)
 })
 addClientBtnCancel.addEventListener('click', () => {
-    inputLastname.firstElementChild.classList.remove('placeholder-up')
-    inputSurname.firstElementChild.classList.remove('placeholder-up')
-    inputName.firstElementChild.classList.remove('placeholder-up')
-    popUpAddClient.classList.remove('open-popup')
-    resetContactField()
+    resetContactField(popUpAddClient, inputNameAddField, inputSurnameAddField, inputLastnameAddField, formContactWrapper)
 })
 // add form listeners
 popUpAddClient.addEventListener('click', (click) => {
     if (click.target == popUpAddClient) {
-        inputLastname.firstElementChild.classList.remove('placeholder-up')
-        inputSurname.firstElementChild.classList.remove('placeholder-up')
-        inputName.firstElementChild.classList.remove('placeholder-up')
-        popUpAddClient.classList.remove('open-popup')
-        resetContactField()
+        resetContactField(popUpAddClient, inputNameAddField, inputSurnameAddField, inputLastnameAddField, formContactWrapper)
     }
 })
 addContactBtnChangeField.addEventListener('click', () => {
@@ -622,62 +654,39 @@ window.addEventListener('keydown', (event) => {
 // Escape btn close 
 window.addEventListener('keydown', (click) => {
     if (click.key === 'Escape') {
-        inputLastname.firstElementChild.classList.remove('placeholder-up')
-        inputSurname.firstElementChild.classList.remove('placeholder-up')
-        inputName.firstElementChild.classList.remove('placeholder-up')
-        inputLastnameChangeField.firstElementChild.classList.remove('placeholder-up')
-        inputSurnameChangeField.firstElementChild.classList.remove('placeholder-up')
-        inputNameChangeField.firstElementChild.classList.remove('placeholder-up')
-        popUpAddClient.classList.remove('open-popup')
-        popUpChangeClient.classList.remove('open-popup')
-        popUpDeleteClient.classList.remove('open-popup')
-        resetContactField()
+        resetContactField(popUpAddClient, inputNameAddField, inputSurnameAddField, inputLastnameAddField, formContactWrapper)
+        resetContactField(popUpChangeClient, inputNameChangeField, inputSurnameChangeField, inputLastnameChangeField, formContactWrapperChangeField)
     }
 })
-inputLastname.addEventListener('mouseover', () => {
-    inputLastname.firstElementChild.classList.add('placeholder-up')
+inputLastnameAddField.addEventListener('mouseover', () => {
+    inputLastnameAddField.firstElementChild.classList.add('placeholder-up')
     addInputLastname.addEventListener('input', () => {
-        inputLastname.firstElementChild.classList.add('placeholder-up')
+        inputLastnameAddField.firstElementChild.classList.add('placeholder-up')
     })
 })
-inputSurname.addEventListener('mouseover', () => {
-    inputSurname.firstElementChild.classList.add('placeholder-up')
+inputSurnameAddField.addEventListener('mouseover', () => {
+    inputSurnameAddField.firstElementChild.classList.add('placeholder-up')
     addInputSurname.addEventListener('input', () => {
-        inputSurname.firstElementChild.classList.add('placeholder-up')
+        inputSurnameAddField.firstElementChild.classList.add('placeholder-up')
     })
 })
-inputName.addEventListener('mouseover', () => {
-    inputName.firstElementChild.classList.add('placeholder-up')
+inputNameAddField.addEventListener('mouseover', () => {
+    inputNameAddField.firstElementChild.classList.add('placeholder-up')
     addInputName.addEventListener('input', () => {
-        inputName.firstElementChild.classList.add('placeholder-up')
+        inputNameAddField.firstElementChild.classList.add('placeholder-up')
     })
 })
 
 // change client
 // buttons & work with pop-up windows (close, moving placeholders)
 btnChangeClientClose.addEventListener('click', () => {
-    inputLastnameChangeField.firstElementChild.classList.remove('placeholder-up')
-    inputSurnameChangeField.firstElementChild.classList.remove('placeholder-up')
-    inputNameChangeField.firstElementChild.classList.remove('placeholder-up')
-    popUpChangeClient.classList.remove('open-popup')
-    resetContactField()
-})
-changeClientBtnCancel.addEventListener('click', () => {
-    inputLastnameChangeField.firstElementChild.classList.remove('placeholder-up')
-    inputSurnameChangeField.firstElementChild.classList.remove('placeholder-up')
-    inputNameChangeField.firstElementChild.classList.remove('placeholder-up')
-    popUpChangeClient.classList.remove('open-popup')
-    resetContactField()
+    resetContactField(popUpChangeClient, inputNameChangeField, inputSurnameChangeField, inputLastnameChangeField, formContactWrapperChangeField)
 })
 
 // change form listeners
 popUpChangeClient.addEventListener('click', (click) => {
     if (click.target == popUpChangeClient) {
-        inputLastnameChangeField.firstElementChild.classList.remove('placeholder-up')
-        inputSurnameChangeField.firstElementChild.classList.remove('placeholder-up')
-        inputNameChangeField.firstElementChild.classList.remove('placeholder-up')
-        popUpChangeClient.classList.remove('open-popup')
-        resetContactField()
+        resetContactField(popUpChangeClient, inputNameChangeField, inputSurnameChangeField, inputLastnameChangeField, formContactWrapperChangeField)
     }
 })
 inputLastnameChangeField.addEventListener('mouseover', () => {
