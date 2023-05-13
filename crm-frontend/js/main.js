@@ -116,8 +116,8 @@ const contactsData = [
     },
 ]
 let contactID = 1,
-    addClientContactID = 1,
-    changeClientContactID = 1
+    numberOfContacts = 0
+
 
 // func's for work with server
 async function getServerData() {
@@ -217,8 +217,11 @@ function $createClientHTML(instanceClient) {
     const $clientOptions = document.createElement('div')
     const $clientOptionsChange = document.createElement('button')
     const $clientOptionsDelete = document.createElement('button')
+    const $btnShowMoreContacts = document.createElement('button')
+
 
     const contacts = instanceClient._contacts
+
     for (const contact of contacts) {
 
         const $clientContactsItem = document.createElement('li')
@@ -239,7 +242,10 @@ function $createClientHTML(instanceClient) {
         $clientContactsItem.classList.add('wrapper', 'contacts_svg')
         $clientContactsItem.setAttribute('data-tippy-content', `${contact.type}: ${contact.value}`)
         $clientContacts.append($clientContactsItem)
+        $clientContacts.append($btnShowMoreContacts)
     }
+
+
 
     $clientID.textContent = instanceClient._id
     $clientName.textContent = `${instanceClient._surname}   ${instanceClient._name}   ${instanceClient._lastname}`
@@ -247,6 +253,7 @@ function $createClientHTML(instanceClient) {
     $clientTimeCreating.textContent = instanceClient.createdTime
     $clientDateChange.textContent = instanceClient.updatedDate
     $clientTimeChange.textContent = instanceClient.updatedTime
+    $btnShowMoreContacts.textContent = `+${Math.abs(contacts.length - 4)}`
     $clientOptionsChange.textContent = 'Change'
     $clientOptionsDelete.textContent = 'Delete'
 
@@ -260,6 +267,7 @@ function $createClientHTML(instanceClient) {
     $clientDateChange.classList.add('dark_14')
     $clientTimeChange.classList.add('grey_14')
     $clientContacts.classList.add('wrapper', 'table-contacts')
+    $btnShowMoreContacts.classList.add('show_contacts_btn')
     $clientOptions.classList.add('table-options', 'wrapper')
     $clientOptionsChange.classList.add('dark_14', 'table_option', 'table_change')
     $clientOptionsDelete.classList.add('dark_14', 'table_option', 'table_delete')
@@ -277,6 +285,8 @@ function $createClientHTML(instanceClient) {
     })
 
     $clientOptionsChange.addEventListener('click', async () => {
+        $clientOptionsChange.classList.add('table_change-loading')
+
         const dataToBeChange = await getServerDataByID(instanceClient._id)
 
         popUpChangeClient.classList.add('open-popup')
@@ -296,7 +306,7 @@ function $createClientHTML(instanceClient) {
                 const contactType = dataToBeChange.contacts[contactObj].type
                 const contactValue = dataToBeChange.contacts[contactObj].value
 
-                addContactOnClick(addContactBtnChangeField, formContactWrapperChangeField, changeClientContactID, contactType, contactValue)
+                addContactOnClick(addContactBtnChangeField, formContactWrapperChangeField, contactType, contactValue)
             }
         }
         // change client BTN-delete
@@ -312,6 +322,20 @@ function $createClientHTML(instanceClient) {
                 addInputLastnameChangeField, changeClientSubmitBtn, popUpChangeClient, formContactWrapperChangeField,
                 inputNameChangeField, inputLastnameChangeField, inputSurnameChangeField, instanceClient._id)
         })
+    })
+
+    if (contacts.length < 5) {
+        $btnShowMoreContacts.classList.add('no--visible')
+    }
+
+    $btnShowMoreContacts.addEventListener('click', () => {
+
+        const contactIcons = document.querySelectorAll('.contacts_svg:nth-child(n+5)')
+        contactIcons.forEach(icon => {
+            icon.style.display = 'flex'
+        });
+
+        $btnShowMoreContacts.remove()
     })
 
     $clientCreating.append($clientDateCreating)
@@ -365,9 +389,9 @@ function $contactInputDOM(inputName, text = '') {
 
         if ($btn.closest('#add__client-form') == addClientForm) {
             $btn.parentNode.remove()
-            addClientContactID--
+            numberOfContacts--
 
-            if (addClientContactID < 5) { addContactBtn.style.display = 'block' }
+            if (numberOfContacts < 7) { addContactBtn.style.display = 'block' }
             // check if exist any contact field so add display = 'flex' to its wrapper
             const countOfContaktFields = document.querySelectorAll('.form__contact')
             if (countOfContaktFields.length > 0) {
@@ -379,9 +403,9 @@ function $contactInputDOM(inputName, text = '') {
 
         if ($btn.closest('#change__client-form') == changeClientForm) {
             $btn.parentNode.remove()
-            changeClientContactID--
+            numberOfContacts--
 
-            if (changeClientContactID < 5) { addContactBtnChangeField.style.display = 'block' }
+            if (numberOfContacts < 7) { addContactBtnChangeField.style.display = 'block' }
             // check if exist any contact field so add display = 'flex' to its wrapper
             const countOfContaktFields = document.querySelectorAll('.form__contact')
             if (countOfContaktFields.length > 0) {
@@ -399,8 +423,13 @@ function $contactInputDOM(inputName, text = '') {
 }
 function resetContactField(typeOfPopUpField, inputBoxName, inputBoxSurename, inputBoxLastname, typeFormWrapper) {
     contactID = 0
-    addClientContactID = 0
-    changeClientContactID = 0
+    numberOfContacts = 0
+
+    // remuve loading effect from change BTN
+    const clientOptionsChange = document.querySelectorAll('.table_change')
+    clientOptionsChange.forEach(btn => {
+        btn.classList.remove('table_change-loading')
+    })
 
     inputBoxName.children[1].value = ''
     inputBoxSurename.children[1].value = ''
@@ -490,15 +519,14 @@ function $formContactDOM(selectorValue = 'tel', inputText = '') {
 
     return $formContact
 }
-function addContactOnClick(btnOnClick, wrapperField, clientContactID, selectorValue, inputText = '') {
+function addContactOnClick(btnOnClick, wrapperField, selectorValue, inputText = '') {
 
     const addContactChangeField = $formContactDOM(selectorValue, inputText)
 
     wrapperField.append(addContactChangeField)
-    clientContactID += 1
-    contactID += 1
+    numberOfContacts += 1
 
-    if (clientContactID > 3) { btnOnClick.style.display = 'none' }
+    if (numberOfContacts > 7) { btnOnClick.style.display = 'none' }
 
     // check if exist any contact field so add display = 'flex' to its wrapper
     const countOfContaktFields = wrapperField.querySelectorAll('.form__contact')
@@ -555,12 +583,17 @@ async function submitClientData(method, inputName, inputSurname,
     }
     // FOR CHANGE STUDENT ON SERVER...
     if (method === 'change') {
-        console.log('change');
-
         const changedData = await changeServerData(id, newClient)
 
-        console.log(changedData);
+        for (const client of arrClientCopy) {
+            if (client._id === id) {
 
+                client._name = newClient._name
+                client._surname = newClient._surname
+                client._lastname = newClient._lastname
+                client._contacts = newClient._contacts
+            }
+        }
     }
 
     // animation for loading
@@ -576,8 +609,16 @@ async function submitClientData(method, inputName, inputSurname,
         }, 200)
     }, 1500)
 }
+function animationLoading() {
+    const whiteScreen = document.querySelector('.table__white_screen')
+    whiteScreen.classList.remove('table__white_screen')
+    whiteScreen.classList.add('table__white_screen-loading')
+    setTimeout(() => {
+        whiteScreen.classList.add('table__white_screen')
+        whiteScreen.classList.remove('table__white_screen-loading')
+    }, 1000);
+}
 function $renderTable(arrClientCopy) {
-
     const lines = $table.querySelectorAll('.table_item')
 
     for (const line of lines) {
@@ -609,6 +650,7 @@ if (checkServerData) {
         ))
     }
 }
+animationLoading()
 $renderTable(arrClientCopy)
 
 // Adding new client to server & it will be taken as Instance to Array Copy !!!!!!!!!!!!!!
@@ -621,7 +663,7 @@ addClientForm.addEventListener('submit', (event) => {
 
 // BTN add contacts
 addContactBtn.addEventListener('click', () => {
-    addContactOnClick(addContactBtn, formContactWrapper, addClientContactID, 'tel')
+    addContactOnClick(addContactBtn, formContactWrapper, 'tel')
 })
 
 // buttons & work with pop-up windows (close, moving placeholders)
@@ -641,7 +683,7 @@ popUpAddClient.addEventListener('click', (click) => {
     }
 })
 addContactBtnChangeField.addEventListener('click', () => {
-    addContactOnClick(addContactBtnChangeField, formContactWrapperChangeField, changeClientContactID, 'tel')
+    addContactOnClick(addContactBtnChangeField, formContactWrapperChangeField, 'tel')
 })
 
 // 'Enter' btn for Delete

@@ -107,11 +107,11 @@ ul {
     display: flex;
     flex-direction: column;
     width: 100%;
-    /* min-width: 730px; */
     height: 333px;
     background-color: var(--color-white);
     margin-bottom: 40px;
     overflow-y: auto;
+    position: relative;
 }
 
 .table_btn {
@@ -171,6 +171,7 @@ ul {
     align-items: center;
     background: var(--color-white);
     padding-left: 5px;
+    border-bottom: 1px solid var(--color-grey-light);
 }
 
 .table_header {
@@ -211,6 +212,7 @@ ul {
 
 .table-contacts {
     width: 14%;
+    padding-right: 30px;
 }
 
 .tippy-tooltip.castom-theme {
@@ -228,11 +230,40 @@ ul {
 
 .wrapper.table-contacts {
     justify-content: flex-start;
+    flex-wrap: wrap;
+    align-items: center;
+}
 
+.show_contacts_btn {
+    padding: 0;
+    margin: 0;
+    height: 16px;
+    width: 16px;
+    margin-right: 4px;
+    margin-bottom: 4px;
+    border-radius: 50%;
+    background: transparent;
+    border: 1.5px solid var(--color-violet);
+    cursor: pointer;
+    display: flex;
+    color: var(--color-dark);
+    font-weight: 600;
+    font-size: 8px;
+    align-items: center;
+    justify-content: center;
+}
+
+.show_contacts_btn:hover {
+    background: rgba(161, 21, 204, 0.385);
 }
 
 .contacts_svg {
-    margin-right: 7px;
+    margin-right: 4px;
+    margin-bottom: 4px;
+}
+
+.contacts_svg:nth-child(n+5) {
+    display: none;
 }
 
 .contacts_svg path {
@@ -362,7 +393,7 @@ ul {
     transform: scale(1);
 }
 
-.change__client_title_wrapper{
+.change__client_title_wrapper {
     display: flex;
     align-self: flex-start;
     align-items: center;
@@ -608,6 +639,50 @@ ul {
     animation: spin 1s linear infinite;
 }
 
+.table__white_screen {
+    position: absolute;
+    z-index: 10;
+    height: 100%;
+    width: 100%;
+    border: none;
+    cursor: no-drop;
+    background-color: var(--color-white);
+    display: none;
+}
+
+.table__white_screen-loading {
+    position: absolute;
+    z-index: 10;
+    height: 100%;
+    width: 100%;
+    border: none;
+    cursor: no-drop;
+    background-color: var(--color-white);
+    display: flex;
+}
+
+.table__white_screen-loading:after {
+    content: "";
+    display: block;
+    position: absolute;
+    top: 47%;
+    left: 50%;
+    width: 37px;
+    height: 37px;
+    background-image: url(../img/loading-Big.svg);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 37px;
+    /* transform-origin: bottom left; */
+    /* margin: -10px 0 0 -10px;
+    border-radius: 50%;
+    border: 5px solid transparent;
+    border-top-color: #B89EFF;
+    border-left-color: #B89EFF;
+    border-bottom-color: #B89EFF; */
+    animation: spin 1s linear infinite;
+}
+
 @keyframes spin {
     to {
         transform: rotate(360deg);
@@ -667,6 +742,45 @@ ul {
     background-image: url(/img/change.svg);
 }
 
+.table_option {
+    height: 70%;
+    width: 46%;
+    padding: 0;
+    margin: 0;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    display: flex;
+    flex-wrap: wrap;
+    text-align: center;
+    padding-left: 30px;
+    background-color: transparent;
+    position: relative;
+    background-repeat: no-repeat;
+    background-position: 6px center;
+    background-size: 12px;
+}
+
+.table_change {
+    background-image: url(/img/change.svg);
+}
+
+.table_change-loading {
+    background-image: none;
+    color: var(--color-violet);
+}
+
+.table_change-loading:after {
+    background-image: url(/img/loading-small.svg);
+    content: "";
+    display: block;
+    position: absolute;
+    top: 35%;
+    left: 6%;
+    width: 12px;
+    height: 12px;
+    animation: spin 1s linear infinite;
+}
 
 /* delete popup */
 
