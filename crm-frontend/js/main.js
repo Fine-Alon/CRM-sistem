@@ -55,12 +55,31 @@ const SERVER_URI = 'http://localhost:3000/api/clients',
     svgSixPlus = `<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
     <circle cx="8" cy="8" r="7.5" stroke="#9873FF"/>
     <path d="M4.92969 8.52734H3.375V7.83203H4.92969V6.23828H5.63281V7.83203H7.19141V8.52734H5.63281V10.1133H4.92969V8.52734ZM7.9375 8.56641C7.9375 6.33203 8.84766 5.21484 10.668 5.21484C10.9544 5.21484 11.1966 5.23698 11.3945 5.28125V6.04688C11.1966 5.98958 10.9674 5.96094 10.707 5.96094C10.0951 5.96094 9.63542 6.125 9.32812 6.45312C9.02083 6.78125 8.85417 7.30729 8.82812 8.03125H8.875C8.9974 7.82031 9.16927 7.65755 9.39062 7.54297C9.61198 7.42578 9.8724 7.36719 10.1719 7.36719C10.6901 7.36719 11.0938 7.52604 11.3828 7.84375C11.6719 8.16146 11.8164 8.59245 11.8164 9.13672C11.8164 9.73568 11.6484 10.2096 11.3125 10.5586C10.9792 10.9049 10.5234 11.0781 9.94531 11.0781C9.53646 11.0781 9.18099 10.9805 8.87891 10.7852C8.57682 10.5872 8.34375 10.3008 8.17969 9.92578C8.01823 9.54818 7.9375 9.09505 7.9375 8.56641ZM9.92969 10.3203C10.2448 10.3203 10.487 10.2188 10.6562 10.0156C10.8281 9.8125 10.9141 9.52214 10.9141 9.14453C10.9141 8.81641 10.8333 8.55859 10.6719 8.37109C10.513 8.18359 10.2734 8.08984 9.95312 8.08984C9.75521 8.08984 9.57292 8.13281 9.40625 8.21875C9.23958 8.30208 9.10807 8.41797 9.01172 8.56641C8.91536 8.71224 8.86719 8.86198 8.86719 9.01562C8.86719 9.38281 8.96615 9.69271 9.16406 9.94531C9.36458 10.1953 9.61979 10.3203 9.92969 10.3203Z" fill="#333333"/>
-    </svg>`
+    </svg>`,
+    $tableBtnID = document.querySelector('.table-id'),
+    $tableBtnName = document.querySelector('.table-name'),
+    $tableBtnCreated = document.querySelector('.table-ceate-date'),
+    $tableBtnChanged = document.querySelector('.table-change-date'),
+    $tableBtnIDSvg = document.querySelector('.table_btn-svg-1'),
+    $tableBtnNameSvg = document.querySelector('.table_btn-svg-2'),
+    $tableBtnCreatedSvg = document.querySelector('.table_btn-svg-3'),
+    $tableBtnChangedSvg = document.querySelector('.table_btn-svg-4'),
+    $searchInputField = document.getElementById('search'),
+    searchTimeout = 700
 
 let checkServerData = await getServerData(),
     currentServerObjID = null
 
-let arrClient = [],
+let arrClient = [
+    // new Client('Александр', 'Иванов', 'Экономика'),
+    // new Client('Michail', 'Babojko', 'godofprogramming'),
+    // new Client('Alexandr', 'Dudukalo', 'curator'),
+    // new Client('Alon', 'Fine', 'fullstack'),
+    // new Client('Judit', 'Fine', 'rocketsince'),
+    // new Client('Ron', 'Green', 'iosdev'),
+    // new Client('Glen', 'Stark', 'disainer'),
+    // new Client('Rick', 'Briens', 'androiddev'),
+],
     arrClientCopy = [...arrClient]
 
 const contactsData = [
@@ -116,7 +135,12 @@ const contactsData = [
     },
 ]
 let contactID = 1,
-    numberOfContacts = 0
+    numberOfContacts = 0,
+    sortProp = '_id',
+    sortVector = true,
+    searchInput = '',
+    searchTimer = null,
+    typeOfSearchInput = true
 
 
 // func's for work with server
@@ -201,6 +225,25 @@ const allSelectorsMadeChoices = () => {
             allowHTML: false
         })
     })
+}
+// here we put  data from server to 'Copy Main Array'
+function arrRewriting() {
+    arrClientCopy = []
+    if (checkServerData) {
+        for (const serverObj of checkServerData) {
+
+            arrClientCopy.push(new Client(
+                serverObj.name,
+                serverObj.surname,
+                serverObj.lastName,
+                serverObj.contacts,
+                serverObj.id,
+                serverObj.createdAt,
+                serverObj.updatedAt
+            ))
+        }
+    }
+    console.log(arrClientCopy);
 }
 function $createClientHTML(instanceClient) {
 
@@ -321,6 +364,7 @@ function $createClientHTML(instanceClient) {
             submitClientData('change', addInputNameChangeField, addInputSurnameChangeField,
                 addInputLastnameChangeField, changeClientSubmitBtn, popUpChangeClient, formContactWrapperChangeField,
                 inputNameChangeField, inputLastnameChangeField, inputSurnameChangeField, instanceClient._id)
+            arrRewriting()
         })
     })
 
@@ -618,6 +662,52 @@ function animationLoading() {
         whiteScreen.classList.remove('table__white_screen-loading')
     }, 1000);
 }
+function changeDateFormat(date) {
+    let today = new Date(Date.parse(date))
+    let dd = today.getDate()
+    let mm = today.getMonth() + 1;//January is 0!`
+
+    const yyyy = today.getFullYear()
+    if (dd < 10) { dd = '0' + dd }
+    if (mm < 10) { mm = '0' + mm }
+
+    return `${mm}.${dd}.${yyyy}`
+}
+function sortClientsArray(arr, prop, vector) {
+
+    return arr.sort((a, b) => {
+
+        if (vector ? a[prop] < b[prop] : a[prop] > b[prop]) { return -1 }
+    })
+}
+function filterClientsArray(arr, typeOfInput) {
+    let copyArr = [...arr]
+
+    if (typeOfInput) {
+
+        return copyArr.filter((client) => {
+
+            let fullname = (client._surname + client._name + client._lastname).toLowerCase().trim()
+
+            if (fullname.includes(searchInput.toLowerCase())) return true
+        })
+    }
+    // copyArr.forEach(el => {
+    //     console.log(el._createdAt);
+    //     console.log(changeDateFormat(el._createdAt));
+    // })
+
+    if (!typeOfInput) {
+
+        return copyArr.filter((client) => {
+
+            let dataCreating = changeDateFormat(client._createdAt)
+            let dataChanging = changeDateFormat(client._updatedAt)
+
+            if (dataCreating.includes(searchInput) || dataChanging.includes(searchInput)) return true
+        })
+    }
+}
 function $renderTable(arrClientCopy) {
     const lines = $table.querySelectorAll('.table_item')
 
@@ -625,33 +715,20 @@ function $renderTable(arrClientCopy) {
         line.remove()
     }
 
-    // for (let item = 1; item < lines.length; item++) {
-    //     lines[item].remove()
-    // }
+    arrClientCopy = filterClientsArray(arrClientCopy, typeOfSearchInput)
+
+    arrClientCopy = sortClientsArray(arrClientCopy, sortProp, sortVector)
+
     arrClientCopy.forEach(instanceClient => {
 
         const $listItem = $createClientHTML(instanceClient)
         $table.append($listItem)
     });
 }
-
-// here we put  data from server to 'Copy Main Array'
-if (checkServerData) {
-    for (const serverObj of checkServerData) {
-
-        arrClientCopy.push(new Client(
-            serverObj.name,
-            serverObj.surname,
-            serverObj.lastName,
-            serverObj.contacts,
-            serverObj.id,
-            serverObj.createdAt,
-            serverObj.updatedAt
-        ))
-    }
-}
 animationLoading()
+arrRewriting()
 $renderTable(arrClientCopy)
+
 
 // Adding new client to server & it will be taken as Instance to Array Copy !!!!!!!!!!!!!!
 addClientForm.addEventListener('submit', (event) => {
@@ -750,21 +827,58 @@ inputNameChangeField.addEventListener('mouseover', () => {
     })
 })
 
-
-
 // delete form listeners
 popUpDeleteClient.addEventListener('click', (click) => {
     if (click.target == popUpDeleteClient) {
         popUpDeleteClient.classList.remove('open-popup')
     }
 })
-
 btnDeleteClientClose.addEventListener('click', () => {
     popUpDeleteClient.classList.remove('open-popup')
 })
-
 deleteClientBtnCancel.addEventListener('click', () => {
     popUpDeleteClient.classList.remove('open-popup')
+})
+
+// filter SEARCH
+$searchInputField.addEventListener('input', () => {
+    clearTimeout(searchTimer)
+
+    searchTimer = setTimeout(() => {
+
+        typeOfSearchInput = isNaN($searchInputField.value)
+
+        searchInput = $searchInputField.value
+        $renderTable(arrClientCopy)
+
+    }, searchTimeout);
+})
+
+// sorting btns
+$tableBtnID.addEventListener('click', () => {
+    sortVector = !sortVector
+    $tableBtnIDSvg.classList.toggle('rotate')
+    sortProp = '_id'
+    $renderTable(arrClientCopy)
+})
+$tableBtnName.addEventListener('click', () => {
+    sortVector = !sortVector
+    $tableBtnNameSvg.classList.toggle('rotate')
+    sortProp = '_surname'
+    $renderTable(arrClientCopy)
+})
+$tableBtnChanged.addEventListener('click', () => {
+    sortVector = !sortVector
+    $tableBtnChangedSvg.classList.toggle('rotate')
+    sortProp = '_updatedAt'
+    console.log('was click updATET');
+    $renderTable(arrClientCopy)
+})
+$tableBtnCreated.addEventListener('click', () => {
+    sortVector = !sortVector
+    $tableBtnCreatedSvg.classList.toggle('rotate')
+    sortProp = '_createdAt'
+    $renderTable(arrClientCopy)
 })
 
 // tippy toltip

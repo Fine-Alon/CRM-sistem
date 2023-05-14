@@ -3,13 +3,13 @@ export default
 
     constructor(name, surname, lastname = 'lastname', contacts = [], id = 'id', createdAt = 'createdAt', updatedAt = 'updatedAt') {
 
-        this._id = id
-        this._createdAt = createdAt
-        this._updatedAt = updatedAt
         this._name = name
         this._surname = surname
         this._lastname = lastname
         this._contacts = contacts
+        this._id = id
+        this._createdAt = createdAt
+        this._updatedAt = updatedAt
     }
 
     get createdDate() {
