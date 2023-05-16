@@ -112,6 +112,7 @@ ul {
     margin-bottom: 40px;
     overflow-y: auto;
     position: relative;
+  /* overflow-y: hidden; */
 }
 
 .table_btn {
@@ -262,6 +263,7 @@ ul {
     font-size: 8px;
     align-items: center;
     justify-content: center;
+    transition: background .3s ease;
 }
 
 .show_contacts_btn:hover {
@@ -283,6 +285,11 @@ ul {
 
 .contacts_svg:hover path {
     fill: rgb(81, 9, 96);
+}
+
+
+.svgtel circle {
+    transition: fill .3s ease;
 }
 
 .svgtel:hover circle {
@@ -323,6 +330,7 @@ ul {
     letter-spacing: 2px;
     cursor: pointer;
     outline: none;
+    transition: background-color .3s ease;
 }
 
 .btn_add-client:focus {
@@ -739,6 +747,7 @@ ul {
     background-repeat: no-repeat;
     background-position: 6px center;
     background-size: 12px;
+    transition:background-color .2s ease;
 }
 
 .table_option:hover {

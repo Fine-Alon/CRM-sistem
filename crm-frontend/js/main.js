@@ -67,8 +67,7 @@ const SERVER_URI = 'http://localhost:3000/api/clients',
     $searchInputField = document.getElementById('search'),
     searchTimeout = 700
 
-let checkServerData = await getServerData(),
-    currentServerObjID = null
+let currentServerObjID = null
 
 let arrClient = [
     // new Client('Александр', 'Иванов', 'Экономика'),
@@ -227,12 +226,15 @@ const allSelectorsMadeChoices = () => {
     })
 }
 // here we put  data from server to 'Copy Main Array'
-function arrRewriting() {
+async function arrRewriting() {
     arrClientCopy = []
+    let newArr = []
+    let checkServerData = await getServerData()
+
     if (checkServerData) {
         for (const serverObj of checkServerData) {
 
-            arrClientCopy.push(new Client(
+            newArr.push(new Client(
                 serverObj.name,
                 serverObj.surname,
                 serverObj.lastName,
@@ -243,27 +245,28 @@ function arrRewriting() {
             ))
         }
     }
-    console.log(arrClientCopy);
+    arrClientCopy = [...newArr]
+    return arrClientCopy;
 }
 function $createClientHTML(instanceClient) {
 
-    const $item = document.createElement('li')
-    const $clientID = document.createElement('span')
-    const $clientName = document.createElement('p')
-    const $clientCreating = document.createElement('div')
-    const $clientDateCreating = document.createElement('span')
-    const $clientTimeCreating = document.createElement('span')
-    const $clientChanging = document.createElement('div')
-    const $clientDateChange = document.createElement('span')
-    const $clientTimeChange = document.createElement('span')
-    const $clientContacts = document.createElement('ul')
-    const $clientOptions = document.createElement('div')
-    const $clientOptionsChange = document.createElement('button')
-    const $clientOptionsDelete = document.createElement('button')
-    const $btnShowMoreContacts = document.createElement('button')
+    const $item = document.createElement('li'),
+        $clientID = document.createElement('span'),
+        $clientName = document.createElement('p'),
+        $clientCreating = document.createElement('div'),
+        $clientDateCreating = document.createElement('span'),
+        $clientTimeCreating = document.createElement('span'),
+        $clientChanging = document.createElement('div'),
+        $clientDateChange = document.createElement('span'),
+        $clientTimeChange = document.createElement('span'),
+        $clientContacts = document.createElement('ul'),
+        $clientOptions = document.createElement('div'),
+        $clientOptionsChange = document.createElement('button'),
+        $clientOptionsDelete = document.createElement('button'),
+        $btnShowMoreContacts = document.createElement('button'),
 
 
-    const contacts = instanceClient._contacts
+        contacts = instanceClient._contacts
 
     for (const contact of contacts) {
 
@@ -359,12 +362,12 @@ function $createClientHTML(instanceClient) {
         })
 
         // Changing client on server & resolt will be taken as Instance to Array Copy 
-        changeClientForm.addEventListener('submit', (event) => {
+        changeClientForm.addEventListener('submit', async (event) => {
             event.preventDefault()
-            submitClientData('change', addInputNameChangeField, addInputSurnameChangeField,
+            await submitClientData('change', addInputNameChangeField, addInputSurnameChangeField,
                 addInputLastnameChangeField, changeClientSubmitBtn, popUpChangeClient, formContactWrapperChangeField,
                 inputNameChangeField, inputLastnameChangeField, inputSurnameChangeField, instanceClient._id)
-            arrRewriting()
+            $renderTable()
         })
     })
 
@@ -647,7 +650,7 @@ async function submitClientData(method, inputName, inputSurname,
     setTimeout(() => {
         typeOfSubmitBTN.classList.remove('form-submit-btn-loading')
         typeOfSubmitBTN.classList.add('form-submit-btn')
-        $renderTable(arrClientCopy)
+        $renderTable()
         setTimeout(() => {
             resetContactField(typeOfPopUpForm, boxName, boxSurname, boxLastname, typeOfContactWrapper)
         }, 200)
@@ -692,10 +695,6 @@ function filterClientsArray(arr, typeOfInput) {
             if (fullname.includes(searchInput.toLowerCase())) return true
         })
     }
-    // copyArr.forEach(el => {
-    //     console.log(el._createdAt);
-    //     console.log(changeDateFormat(el._createdAt));
-    // })
 
     if (!typeOfInput) {
 
@@ -708,12 +707,14 @@ function filterClientsArray(arr, typeOfInput) {
         })
     }
 }
-function $renderTable(arrClientCopy) {
+async function $renderTable() {
     const lines = $table.querySelectorAll('.table_item')
 
     for (const line of lines) {
         line.remove()
     }
+    arrClientCopy = []
+    arrClientCopy = await arrRewriting()
 
     arrClientCopy = filterClientsArray(arrClientCopy, typeOfSearchInput)
 
@@ -725,9 +726,9 @@ function $renderTable(arrClientCopy) {
         $table.append($listItem)
     });
 }
+
 animationLoading()
-arrRewriting()
-$renderTable(arrClientCopy)
+$renderTable()
 
 
 // Adding new client to server & it will be taken as Instance to Array Copy !!!!!!!!!!!!!!
@@ -849,7 +850,7 @@ $searchInputField.addEventListener('input', () => {
         typeOfSearchInput = isNaN($searchInputField.value)
 
         searchInput = $searchInputField.value
-        $renderTable(arrClientCopy)
+        $renderTable()
 
     }, searchTimeout);
 })
@@ -859,26 +860,25 @@ $tableBtnID.addEventListener('click', () => {
     sortVector = !sortVector
     $tableBtnIDSvg.classList.toggle('rotate')
     sortProp = '_id'
-    $renderTable(arrClientCopy)
+    $renderTable()
 })
 $tableBtnName.addEventListener('click', () => {
     sortVector = !sortVector
     $tableBtnNameSvg.classList.toggle('rotate')
     sortProp = '_surname'
-    $renderTable(arrClientCopy)
+    $renderTable()
 })
 $tableBtnChanged.addEventListener('click', () => {
     sortVector = !sortVector
     $tableBtnChangedSvg.classList.toggle('rotate')
     sortProp = '_updatedAt'
-    console.log('was click updATET');
-    $renderTable(arrClientCopy)
+    $renderTable()
 })
 $tableBtnCreated.addEventListener('click', () => {
     sortVector = !sortVector
     $tableBtnCreatedSvg.classList.toggle('rotate')
     sortProp = '_createdAt'
-    $renderTable(arrClientCopy)
+    $renderTable()
 })
 
 // tippy toltip
